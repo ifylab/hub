@@ -6,7 +6,7 @@ Many of the early tools come out of AEC (architecture, engineering, construction
 
 It's early days; the portfolio will grow one tool at a time, in the open.
 
-Apache 2.0, DCO sign-off on contributions.
+Apache 2.0; contributions accepted under the same license.
 
 ## Projects
 
@@ -20,4 +20,4 @@ The hub holds the brand, shared tooling, and the index that points at each tool 
 
 ## License
 
-Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE). Contributions need a [Developer Certificate of Origin](https://developercertificate.org/) sign-off (`git commit -s`).
+Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE). Contributions are accepted under the same license; no separate contributor agreement is required.

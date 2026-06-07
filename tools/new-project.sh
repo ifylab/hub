@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: Apache-2.0
 # new-project.sh — scaffold a new .ify sub-project as a workspace sibling.
 # Placeholder: the full implementation lands in workbook/Plan/10-subproject-template.md.
 set -euo pipefail

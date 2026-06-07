@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: Apache-2.0
 # dev-checkout.sh — clone or update every portfolio repo as a sibling of the hub,
 # reading the list from apps/index.json. Sub-projects live next to hub/, not inside it.
 set -euo pipefail
