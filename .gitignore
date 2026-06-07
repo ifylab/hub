@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Claude tooling (kept out of the public repo for now; re-add with the agent system later)
+.claude/
+/CLAUDE.md
+
+# Local scratch
+drafts/
+
+# Build outputs
+dist/
+build/
+.astro/
+
+# OS
+.DS_Store
