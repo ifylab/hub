@@ -1,4 +1,12 @@
 {
   "version": 1,
-  "projects": []
+  "projects": [
+    {
+      "name": "skillmeld",
+      "repo": "https://github.com/ifylab/skillmeld",
+      "description": "Discover existing community Claude skills and merge the best into one tailored, security-scanned set.",
+      "language": "Python",
+      "status": "active"
+    }
+  ]
 }

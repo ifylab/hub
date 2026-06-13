@@ -12,7 +12,7 @@ Apache 2.0; contributions accepted under the same license.
 
 Each tool lives in its own repository under [ifylab](https://github.com/ifylab) and is listed here as it ships.
 
-_(none published yet)_
+- **[skillmeld](https://github.com/ifylab/skillmeld)** — discovers existing community Claude skills for a use case, security-scans them, and merges the best few into one tailored set. Composes existing skills rather than generating new ones.
 
 ## About this repository
 
