@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="brand/logo-dark.png">
+    <img alt=".ify" src="brand/logo-light.png" width="140">
+  </picture>
+</p>
+
 # .ify
 
 A small, growing set of focused automation tools. Each does one narrow job well, closes a gap that keeps coming up in real work, and builds on existing open-source tools rather than reinventing them.
