@@ -30,7 +30,7 @@ Everything public inherits this voice: the hub README, each tool's README, docs,
 
 Hub README, first paragraph:
 
-> .ify is a set of small, opinionated automation tools for AEC practitioners, built on top of established open-source projects — Speckle for data exchange, IfcOpenShell and Bonsai for IFC, pyRevit for Revit-side scripting. Each tool solves a specific pain that comes up on real projects [...]. Apache 2.0; contributions under the same license, no separate agreement.
+> .ify is a set of small, opinionated agentic tools for AEC practitioners, built on top of established open-source projects — Speckle for data exchange, IfcOpenShell and Bonsai for IFC, pyRevit for Revit-side scripting. Each tool solves a specific pain that comes up on real projects [...]. Apache 2.0; contributions under the same license, no separate agreement.
 
 Sub-project README, first paragraph (illustrative — an XLSX to IFC/COBie normalizer):
 

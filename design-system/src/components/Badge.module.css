@@ -1,0 +1,23 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ify-space-1);
+  font-family: var(--ify-font-label);
+  font-size: var(--ify-text-xs);
+  letter-spacing: var(--ify-tracking-wide);
+  padding: var(--ify-space-1) var(--ify-space-2);
+  border-radius: var(--ify-radius-sm);
+  border: 1px solid var(--ify-line);
+}
+
+.neutral {
+  background: var(--ify-surface-2);
+  color: var(--ify-ink-muted);
+}
+
+.accent {
+  background: var(--ify-accent-muted);
+  color: var(--ify-accent-strong);
+  border-color: transparent;
+}

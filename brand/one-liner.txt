@@ -1,1 +1,1 @@
-.ify is a small, growing set of focused automation tools — each does one narrow job well and builds on existing open-source tools rather than reinventing them.
+.ify is a growing set of focused agentic tools — each does one narrow job well and builds on existing open-source tools rather than reinventing them.

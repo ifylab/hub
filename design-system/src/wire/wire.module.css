@@ -1,0 +1,83 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+.field {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.wire {
+  fill: none;
+  stroke: var(--ify-wire-rest);
+  stroke-width: var(--ify-wire-stroke);
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: ify-wire-draw var(--ify-motion-dur-wire) var(--ify-motion-ease-out) forwards;
+  transition:
+    stroke var(--ify-motion-dur) var(--ify-motion-ease-out),
+    stroke-width var(--ify-motion-dur) var(--ify-motion-ease-out);
+}
+
+.wire:hover {
+  stroke: var(--ify-wire-active);
+  stroke-width: var(--ify-wire-stroke-active);
+}
+
+.wireHot {
+  stroke: var(--ify-accent);
+}
+
+.socket {
+  fill: var(--ify-socket);
+  stroke: none;
+}
+
+.socketActive {
+  fill: var(--ify-wire-active);
+}
+
+/* WireBus: a vertical "bus" wire down the left of a feed, with a sagging stub plugging
+   into each row. Drawn over the feed container (its positioning context). */
+.busLayer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.busLine,
+.stubLine {
+  fill: none;
+  stroke: var(--ify-wire-rest);
+  stroke-width: 2px;
+  stroke-linecap: round;
+}
+
+.stubLineHot {
+  stroke: var(--ify-accent);
+}
+
+.busNode {
+  fill: var(--ify-socket);
+}
+
+.busNodeHot {
+  fill: var(--ify-accent);
+}
+
+@keyframes ify-wire-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wire {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}

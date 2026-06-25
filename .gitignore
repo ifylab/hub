@@ -7,9 +7,15 @@ __pycache__/
 .venv/
 venv/
 
-# Claude tooling (kept out of the public repo for now; re-add with the agent system later)
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Local tooling and assistant config (not committed)
 .claude/
 /CLAUDE.md
+.impeccable/
 
 # Local scratch
 drafts/

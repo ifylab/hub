@@ -1,0 +1,21 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+import Base from '../layouts/Base.astro'
+import { Hero, Tools } from '@ifylab/design-system'
+import { tagline } from '../data/site'
+import { tools, connections, feeds } from '../data/tools'
+
+const linkedTools = tools.map((t) => ({ ...t, href: `/tools/${t.id}` }))
+---
+
+<Base title=".ify — focused agentic tools">
+  <Hero
+    tagline={tagline}
+    logoLight="/media/brand/logo-light.png"
+    logoDark="/media/brand/logo-dark.png"
+    client:load
+  />
+  <div id="tools">
+    <Tools tools={linkedTools} connections={connections} feeds={feeds} client:load />
+  </div>
+</Base>

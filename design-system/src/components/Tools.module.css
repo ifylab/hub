@@ -1,0 +1,242 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+.section {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--ify-space-9) var(--ify-space-5) var(--ify-space-8);
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--ify-space-3) var(--ify-space-5);
+  margin-bottom: var(--ify-space-7);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--ify-font-display);
+  font-weight: var(--ify-weight-light);
+  letter-spacing: var(--ify-tracking-display);
+  font-size: var(--ify-display-sm);
+  line-height: 1;
+  color: var(--ify-ink);
+}
+
+.blurb {
+  margin: 0;
+  max-width: 60ch;
+  font-family: var(--ify-font-text);
+  font-size: var(--ify-text-lg);
+  color: var(--ify-ink-muted);
+  text-wrap: pretty;
+}
+
+/* Responsive scaler: holds the fixed patch and scales it to the available width. */
+.viewport {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.patch {
+  position: relative;
+  transform-origin: top left;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.wires {
+  z-index: 0;
+}
+
+.sockets {
+  z-index: 3;
+}
+
+.wire {
+  fill: none;
+  stroke: var(--ify-wire-rest);
+  stroke-width: 2.5px;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.wireHot {
+  stroke: var(--ify-accent);
+}
+
+.tile {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  background: var(--ify-surface);
+  border: 1px solid var(--ify-line);
+  border-radius: var(--ify-radius-md);
+  padding: var(--ify-space-5);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  transition:
+    box-shadow var(--ify-motion-dur) var(--ify-motion-ease-out),
+    border-color var(--ify-motion-dur) var(--ify-motion-ease-out);
+}
+
+.tile:hover {
+  border-color: var(--ify-line-strong);
+}
+
+.tile:focus-visible {
+  outline: 2px solid var(--ify-focus);
+  outline-offset: 3px;
+}
+
+.dragging {
+  z-index: 4;
+  cursor: grabbing;
+  border-color: var(--ify-accent);
+  box-shadow: 0 12px 32px -12px var(--ify-accent-strong);
+}
+
+.tileHead {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--ify-font-label);
+  font-size: var(--ify-text-xs);
+  letter-spacing: var(--ify-tracking-wide);
+  line-height: 1;
+  padding: 5px 11px;
+  border-radius: var(--ify-radius-pill);
+}
+
+.pillActive {
+  background: var(--ify-warm);
+  color: var(--ify-on-warm);
+}
+
+.pillBeta {
+  background: var(--ify-accent-muted);
+  color: var(--ify-accent-strong);
+}
+
+.pillSoon {
+  background: var(--ify-surface-2);
+  color: var(--ify-ink-muted);
+}
+
+.tileBody {
+  margin-top: auto;
+}
+
+/* Each link's box hugs its own text (fit-content), so only the text is clickable — never
+   the empty space beside a short line. */
+.nameLink {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: var(--ify-font-display);
+  font-weight: var(--ify-weight-light);
+  font-size: var(--ify-text-2xl);
+  letter-spacing: var(--ify-tracking-tight);
+  line-height: 1.1;
+  color: var(--ify-ink);
+  transition: color var(--ify-motion-dur) var(--ify-motion-ease-out);
+}
+
+.nameLink:hover {
+  color: var(--ify-accent-strong);
+}
+
+.nameLink:focus-visible {
+  outline: 2px solid var(--ify-focus);
+  outline-offset: 3px;
+  border-radius: var(--ify-radius-sm);
+}
+
+.suffix {
+  color: var(--ify-ink-subtle);
+}
+
+.descLink {
+  display: block;
+  width: fit-content;
+  max-width: 32ch;
+  margin-top: var(--ify-space-2);
+  text-decoration: none;
+  cursor: pointer;
+  font-family: var(--ify-font-text);
+  font-size: var(--ify-text-base);
+  line-height: 1.4;
+  color: var(--ify-ink-muted);
+  transition: color var(--ify-motion-dur) var(--ify-motion-ease-out);
+}
+
+.descLink:hover {
+  color: var(--ify-accent-strong);
+}
+
+/* Stacked list shown below the graph breakpoint (small / touch screens). */
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ify-space-4);
+}
+
+.listItem {
+  margin: 0;
+}
+
+.listLink {
+  display: block;
+  padding: var(--ify-space-5);
+  background: var(--ify-surface);
+  border: 1px solid var(--ify-line);
+  border-radius: var(--ify-radius-md);
+  text-decoration: none;
+  transition: border-color var(--ify-motion-dur) var(--ify-motion-ease-out);
+}
+
+.listLink:hover {
+  border-color: var(--ify-line-strong);
+}
+
+.listLink:focus-visible {
+  outline: 2px solid var(--ify-focus);
+  outline-offset: 3px;
+}
+
+.listRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ify-space-4);
+}
+
+.listDesc {
+  display: block;
+  margin-top: var(--ify-space-3);
+  max-width: 60ch;
+  font-family: var(--ify-font-text);
+  font-size: var(--ify-text-base);
+  line-height: 1.45;
+  color: var(--ify-ink-muted);
+}

@@ -1,0 +1,178 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Tool page. Real content is data-driven via `details[id]` in src/data/tools.ts, so each tool
+// page grows by editing data. A tool with no `details` entry (e.g. a "soon" tool) shows the
+// minimal scaffold. The richer per-tool layout (photos + a small interactive piece) is a
+// placeholder, to be designed and layered on later.
+import Base from '../../layouts/Base.astro'
+import { tools, details } from '../../data/tools'
+
+export function getStaticPaths() {
+  return tools.map((t) => ({ params: { id: t.id }, props: { tool: t } }))
+}
+
+const { tool } = Astro.props
+const detail = details[tool.id]
+const statusLabel: Record<string, string> = { active: 'active', beta: 'beta', soon: 'coming soon' }
+const [lede, ...rest] = detail?.summary ?? []
+---
+
+<Base title={`${tool.name}${tool.suffix ?? ''} — .ify`} description={detail?.summary[0] ?? tool.description ?? tool.name}>
+  <article class="tool">
+    <div class="head">
+      <h1>{tool.name}{tool.suffix ? <span class="suffix">{tool.suffix}</span> : null}</h1>
+      <span class={`pill ${tool.status}`}>{statusLabel[tool.status]}</span>
+    </div>
+
+    {lede ? <p class="lede">{lede}</p> : tool.description ? <p class="lede">{tool.description}</p> : null}
+    {rest.map((p) => <p class="body">{p}</p>)}
+
+    {
+      detail?.highlights ? (
+        <ul class="highlights">
+          {detail.highlights.map((h) => (
+            <li>{h}</li>
+          ))}
+        </ul>
+      ) : null
+    }
+
+    {
+      detail?.repo ? (
+        <div class="actions">
+          <a class="cta" href={detail.repo} target="_blank" rel="noopener noreferrer">
+            View on GitHub <span aria-hidden="true">{'→'}</span>
+          </a>
+          {detail.license ? <span class="license">{detail.license}</span> : null}
+        </div>
+      ) : null
+    }
+
+    {!detail ? <p class="note">Tool page — details land here as this one takes shape.</p> : null}
+  </article>
+</Base>
+
+<style>
+  .tool {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: var(--ify-space-8) var(--ify-space-7) var(--ify-space-9);
+  }
+  .head {
+    display: flex;
+    align-items: center;
+    gap: var(--ify-space-5);
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--ify-font-display);
+    font-weight: var(--ify-weight-light);
+    letter-spacing: var(--ify-tracking-tight);
+    font-size: var(--ify-display-sm);
+    line-height: 1;
+    color: var(--ify-ink);
+  }
+  .suffix {
+    color: var(--ify-ink-subtle);
+  }
+  .pill {
+    font-family: var(--ify-font-label);
+    font-size: var(--ify-text-xs);
+    letter-spacing: var(--ify-tracking-wide);
+    line-height: 1;
+    padding: 5px 11px;
+    border-radius: var(--ify-radius-pill);
+  }
+  .pill.active {
+    background: var(--ify-warm);
+    color: var(--ify-on-warm);
+  }
+  .pill.beta {
+    background: var(--ify-accent-muted);
+    color: var(--ify-accent-strong);
+  }
+  .pill.soon {
+    background: var(--ify-surface-2);
+    color: var(--ify-ink-muted);
+  }
+  .lede {
+    margin: var(--ify-space-6) 0 0;
+    max-width: 60ch;
+    font-family: var(--ify-font-text);
+    font-size: var(--ify-text-xl);
+    line-height: 1.5;
+    color: var(--ify-ink);
+    text-wrap: pretty;
+  }
+  .body {
+    margin: var(--ify-space-5) 0 0;
+    max-width: 64ch;
+    font-family: var(--ify-font-text);
+    font-size: var(--ify-text-base);
+    line-height: 1.6;
+    color: var(--ify-ink-muted);
+    text-wrap: pretty;
+  }
+  .highlights {
+    margin: var(--ify-space-7) 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--ify-line);
+  }
+  .highlights li {
+    position: relative;
+    margin: 0;
+    padding: var(--ify-space-4) 0 var(--ify-space-4) var(--ify-space-6);
+    max-width: 66ch;
+    font-family: var(--ify-font-text);
+    font-size: var(--ify-text-base);
+    line-height: 1.55;
+    color: var(--ify-ink-muted);
+    border-bottom: 1px solid var(--ify-line);
+    text-wrap: pretty;
+  }
+  .highlights li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: calc(var(--ify-space-4) + 0.6em);
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ify-accent);
+  }
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: var(--ify-space-5);
+    margin-top: var(--ify-space-7);
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ify-space-2);
+    font-family: var(--ify-font-text);
+    font-weight: var(--ify-weight-medium);
+    color: var(--ify-on-accent);
+    background: var(--ify-accent-strong);
+    border-radius: var(--ify-radius-md);
+    padding: 12px 20px;
+    text-decoration: none;
+    transition: background var(--ify-motion-dur) var(--ify-motion-ease-out);
+  }
+  .cta:hover {
+    background: var(--ify-accent);
+  }
+  .license {
+    font-family: var(--ify-font-label);
+    font-size: var(--ify-text-xs);
+    letter-spacing: var(--ify-tracking-wide);
+    color: var(--ify-ink-subtle);
+  }
+  .note {
+    margin-top: var(--ify-space-7);
+    font-family: var(--ify-font-label);
+    font-size: var(--ify-text-sm);
+    color: var(--ify-ink-subtle);
+  }
+</style>

@@ -1,0 +1,61 @@
+{
+  "name": "@ifylab/design-system",
+  "private": true,
+  "version": "0.0.0",
+  "description": "The .ify design system: brand-foundation tokens and a reusable React component kit, built around the Grasshopper wire motif.",
+  "license": "Apache-2.0",
+  "author": "Hossein Zargar",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles.css": "./dist/index.css",
+    "./tokens.css": "./src/foundation/tokens.css",
+    "./fonts.css": "./src/foundation/fonts.css"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "tokens": "node tokens/build.mjs",
+    "dev": "vite",
+    "build": "npm run tokens && vite build && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "dependencies": {
+    "@fontsource-variable/archivo": "^5.2.8",
+    "@fontsource-variable/hanken-grotesk": "^5.2.8",
+    "@fontsource-variable/jost": "^5.2.8",
+    "@fontsource/commit-mono": "^5.2.5",
+    "@fontsource/fragment-mono": "^5.2.8",
+    "motion": "^12.40.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "jsdom": "^29.1.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16",
+    "vitest": "^4.1.9"
+  }
+}

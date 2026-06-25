@@ -1,0 +1,76 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: min(86vh, 760px);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: var(--ify-space-7);
+  background: var(--ify-bg);
+  /* Heftier hero wires than the kit default, scoped to the bands below. */
+  --ify-wire-stroke: 2.25px;
+}
+
+.band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: clamp(160px, 34%, 320px);
+  pointer-events: none;
+}
+
+.bandTop {
+  top: 0;
+}
+
+.bandBottom {
+  bottom: 0;
+}
+
+.stage {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--ify-space-7);
+  /* No background fill: the wire bands stop well clear of this center, so the wordmark sits
+     on the open page and the wires are never hidden behind a box. */
+}
+
+.mark {
+  margin: 0;
+}
+
+.markImg {
+  display: block;
+  height: clamp(64px, 11vw, 120px);
+  width: auto;
+}
+
+.markImgDark {
+  display: none;
+}
+
+:global([data-theme='dark']) .markImgLight {
+  display: none;
+}
+
+:global([data-theme='dark']) .markImgDark {
+  display: block;
+}
+
+.tagline {
+  margin: var(--ify-space-5) auto 0;
+  max-width: 42ch;
+  font-family: var(--ify-font-text);
+  font-size: var(--ify-text-xl);
+  color: var(--ify-ink-muted);
+  text-wrap: pretty;
+}
+
+.cta {
+  margin-top: var(--ify-space-6);
+}

@@ -1,0 +1,181 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+import { navLinks } from '../data/site'
+
+const isExternal = (href: string) => /^https?:/.test(href)
+const path = Astro.url.pathname
+const isCurrent = (href: string) =>
+  href === path || (href !== '/' && !href.startsWith('/#') && path.startsWith(href))
+---
+
+<header class="topbar">
+  <a class="brand" href="/" aria-label=".ify home">
+    <img class="brand-logo brand-logo--light" src="/media/brand/logo-light.png" alt=".ify" width="548" height="400" />
+    <img class="brand-logo brand-logo--dark" src="/media/brand/logo-dark.png" alt=".ify" width="548" height="400" />
+  </a>
+  <div class="actions">
+    <nav class="nav" aria-label="Primary">
+      {
+        navLinks.map((l) => (
+          <a
+            class="link"
+            href={l.href}
+            aria-current={isCurrent(l.href) ? 'page' : undefined}
+            {...(isExternal(l.href) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
+            {l.label}
+          </a>
+        ))
+      }
+    </nav>
+    <button id="theme-toggle" class="toggle" type="button" aria-label="Switch color theme">
+      Dark
+    </button>
+  </div>
+</header>
+
+<script>
+  function effectiveTheme(): 'light' | 'dark' {
+    const t = document.documentElement.dataset.theme
+    if (t === 'light' || t === 'dark') return t
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  }
+
+  function initThemeToggle() {
+    const btn = document.getElementById('theme-toggle')
+    if (!btn) return
+    const sync = () => {
+      const next = effectiveTheme() === 'dark' ? 'light' : 'dark'
+      btn.textContent = next === 'dark' ? 'Dark' : 'Light'
+      btn.setAttribute('aria-label', `Switch to ${next} theme`)
+    }
+    sync()
+    btn.addEventListener('click', () => {
+      const next = effectiveTheme() === 'dark' ? 'light' : 'dark'
+      document.documentElement.dataset.theme = next
+      try {
+        localStorage.setItem('ify-theme', next)
+      } catch {
+        /* private mode — ignore */
+      }
+      sync()
+    })
+  }
+
+  document.addEventListener('astro:page-load', initThemeToggle)
+</script>
+
+<style>
+  .topbar {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--ify-space-4) var(--ify-space-5);
+    padding: max(var(--ify-space-5), env(safe-area-inset-top)) max(var(--ify-space-7), env(safe-area-inset-right))
+      var(--ify-space-5) max(var(--ify-space-7), env(safe-area-inset-left));
+    border-bottom: 1px solid var(--ify-line);
+    background: var(--ify-bg);
+  }
+
+  .brand {
+    text-decoration: none;
+    line-height: 0;
+  }
+
+  .brand-logo {
+    height: 22px;
+    width: auto;
+    display: block;
+  }
+
+  .brand-logo--dark {
+    display: none;
+  }
+
+  :global([data-theme='dark']) .brand-logo--light {
+    display: none;
+  }
+
+  :global([data-theme='dark']) .brand-logo--dark {
+    display: block;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: var(--ify-space-6);
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: var(--ify-space-6);
+  }
+
+  .link {
+    font-family: var(--ify-font-text);
+    font-weight: var(--ify-weight-medium);
+    font-size: var(--ify-text-base);
+    color: var(--ify-ink-muted);
+    text-decoration: none;
+    transition: color var(--ify-motion-dur) var(--ify-motion-ease-out);
+  }
+
+  .link:hover,
+  .link[aria-current='page'] {
+    color: var(--ify-accent-strong);
+  }
+
+  .link:focus-visible {
+    outline: 2px solid var(--ify-focus);
+    outline-offset: 4px;
+    border-radius: var(--ify-radius-sm);
+  }
+
+  .toggle {
+    font-family: var(--ify-font-label);
+    font-size: var(--ify-text-xs);
+    letter-spacing: var(--ify-tracking-wide);
+    color: var(--ify-ink-muted);
+    background: transparent;
+    border: 1px solid var(--ify-line);
+    border-radius: var(--ify-radius-pill);
+    padding: 6px 13px;
+    cursor: pointer;
+    transition:
+      color var(--ify-motion-dur) var(--ify-motion-ease-out),
+      border-color var(--ify-motion-dur) var(--ify-motion-ease-out);
+  }
+
+  .toggle:hover {
+    color: var(--ify-accent-strong);
+    border-color: var(--ify-line-strong);
+  }
+
+  .toggle:focus-visible {
+    outline: 2px solid var(--ify-focus);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 32rem) {
+    .nav {
+      gap: var(--ify-space-4);
+    }
+    .actions {
+      gap: var(--ify-space-4);
+    }
+  }
+
+  /* Bigger tap targets on touch screens. */
+  @media (pointer: coarse) {
+    .link {
+      padding: 8px 2px;
+    }
+    .toggle {
+      padding: 10px 15px;
+    }
+  }
+</style>

@@ -1,0 +1,98 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// First-pass news article page so the click-through flow is visible. The richer per-item
+// layout is a placeholder, to be designed and expanded later.
+import Base from '../../layouts/Base.astro'
+import { entries } from '../../data/news'
+
+export function getStaticPaths() {
+  return entries.map((e) => ({ params: { slug: e.slug }, props: { entry: e } }))
+}
+
+const { entry } = Astro.props
+---
+
+<Base title={`${entry.title} — .ify News`} description={entry.blurb}>
+  <article class="article">
+    <span class={`tag ${entry.tagWarm ? 'warm' : ''}`}>{entry.tag}</span>
+    <h1>{entry.title}</h1>
+    <p class="meta">{entry.meta}</p>
+    <p class="lede">{entry.blurb}</p>
+    {entry.body ? <p class="body">{entry.body}</p> : null}
+    {
+      entry.source ? (
+        <a class="source" href={entry.source} target="_blank" rel="noopener noreferrer">
+          Read the source <span aria-hidden="true">{'→'}</span>
+        </a>
+      ) : null
+    }
+  </article>
+</Base>
+
+<style>
+  .article {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: var(--ify-space-8) var(--ify-space-7) var(--ify-space-9);
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--ify-font-label);
+    font-size: var(--ify-text-xs);
+    letter-spacing: var(--ify-tracking-wide);
+    line-height: 1;
+    padding: 5px 10px;
+    border-radius: var(--ify-radius-pill);
+    background: var(--ify-accent-muted);
+    color: var(--ify-accent-strong);
+  }
+  .tag.warm {
+    background: var(--ify-warm);
+    color: var(--ify-on-warm);
+  }
+  h1 {
+    margin: var(--ify-space-4) 0 0;
+    font-family: var(--ify-font-display);
+    font-weight: var(--ify-weight-light);
+    letter-spacing: var(--ify-tracking-display);
+    font-size: var(--ify-display-sm);
+    line-height: 1.05;
+    color: var(--ify-ink);
+  }
+  .meta {
+    margin: var(--ify-space-4) 0 0;
+    font-family: var(--ify-font-label);
+    font-size: var(--ify-text-xs);
+    color: var(--ify-ink-subtle);
+  }
+  .lede {
+    margin: var(--ify-space-6) 0 0;
+    font-family: var(--ify-font-text);
+    font-size: var(--ify-text-xl);
+    line-height: 1.5;
+    color: var(--ify-ink);
+    text-wrap: pretty;
+  }
+  .body {
+    margin: var(--ify-space-5) 0 0;
+    font-family: var(--ify-font-text);
+    font-size: var(--ify-text-base);
+    line-height: 1.6;
+    color: var(--ify-ink-muted);
+    text-wrap: pretty;
+  }
+  .source {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ify-space-2);
+    margin-top: var(--ify-space-7);
+    font-family: var(--ify-font-text);
+    font-weight: var(--ify-weight-medium);
+    color: var(--ify-accent-strong);
+    text-decoration: none;
+  }
+  .source:hover {
+    color: var(--ify-accent);
+  }
+</style>

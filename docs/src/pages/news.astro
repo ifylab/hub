@@ -1,0 +1,24 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+import Base from '../layouts/Base.astro'
+import { NewsFeed } from '@ifylab/design-system'
+import type { NewsItem } from '@ifylab/design-system'
+import { entries, categories } from '../data/news'
+
+const items: NewsItem[] = entries.map((e) => ({
+  tag: e.tag,
+  tagWarm: e.tagWarm,
+  hot: e.hot,
+  title: e.title,
+  blurb: e.blurb,
+  meta: e.meta,
+  href: `/news/${e.slug}`,
+}))
+---
+
+<Base
+  title="News — .ify"
+  description="New tools, libraries, and updates worth knowing — curated."
+>
+  <NewsFeed items={items} categories={categories} client:visible />
+</Base>

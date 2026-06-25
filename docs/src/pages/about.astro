@@ -1,0 +1,32 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+import Base from '../layouts/Base.astro'
+import { About } from '@ifylab/design-system'
+import { profiles, sections } from '../data/about'
+---
+
+<Base title="About — .ify" description="Hossein Zargar — building .ify, born from practice.">
+  <About
+    name="Hossein Zargar"
+    profiles={profiles}
+    sections={sections}
+    portraitSrc="/media/portrait/headshot.jpg"
+    portraitAlt="Hossein Zargar"
+    client:visible
+  >
+    <p>
+      <strong>.ify</strong> is a growing set of focused agentic tools built on open
+      source, managed and developed by <strong>Hossein Zargar</strong>.
+    </p>
+    <p>
+      Hossein is a software developer exploring how data-driven computational design connects
+      across disciplines through scalable application. His current role as an{' '}
+      <strong>AI Software Developer</strong> focuses on developing next-generation tools that
+      leverage current advancements in machine learning and large language models for informed
+      building design decisions. He holds a{' '}
+      <strong>Ph.D. in Architectural Engineering from Penn State</strong>, where his research
+      focused on bringing robotic fabrication and constructability knowledge into early-stage
+      computational design optimization.
+    </p>
+  </About>
+</Base>

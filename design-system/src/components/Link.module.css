@@ -1,0 +1,19 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+.link {
+  color: var(--ify-accent-strong);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition:
+    color var(--ify-motion-dur) var(--ify-motion-ease-out),
+    border-color var(--ify-motion-dur) var(--ify-motion-ease-out);
+}
+
+.link:hover {
+  border-bottom-color: currentColor;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--ify-focus);
+  outline-offset: 2px;
+  border-radius: var(--ify-radius-sm);
+}

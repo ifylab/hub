@@ -1,0 +1,171 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+.section {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: var(--ify-space-9) var(--ify-space-7) var(--ify-space-8);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--ify-font-display);
+  font-weight: var(--ify-weight-light);
+  letter-spacing: var(--ify-tracking-display);
+  font-size: var(--ify-display-sm);
+  line-height: 1;
+  color: var(--ify-ink);
+}
+
+.lead {
+  margin: var(--ify-space-3) 0 0;
+  max-width: 48ch;
+  font-family: var(--ify-font-text);
+  font-size: var(--ify-text-lg);
+  color: var(--ify-ink-muted);
+  text-wrap: pretty;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ify-space-3);
+  margin: var(--ify-space-6) 0 var(--ify-space-7);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ify-space-2);
+  font-family: var(--ify-font-label);
+  font-size: var(--ify-text-xs);
+  letter-spacing: var(--ify-tracking-wide);
+  color: var(--ify-ink-muted);
+  background: var(--ify-bg);
+  border: 1px solid var(--ify-line);
+  border-radius: var(--ify-radius-pill);
+  padding: 6px 13px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color var(--ify-motion-dur) var(--ify-motion-ease-out),
+    border-color var(--ify-motion-dur) var(--ify-motion-ease-out),
+    background var(--ify-motion-dur) var(--ify-motion-ease-out);
+}
+
+.chip:hover {
+  color: var(--ify-accent-strong);
+  border-color: var(--ify-line-strong);
+}
+
+.chip:focus-visible {
+  outline: 2px solid var(--ify-focus);
+  outline-offset: 3px;
+}
+
+.chipActive {
+  color: var(--ify-accent-strong);
+  border-color: var(--ify-accent);
+  background: var(--ify-accent-muted);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ify-socket);
+}
+
+.feed {
+  position: relative;
+  padding-left: 88px;
+}
+
+.empty {
+  margin: 0;
+  padding: var(--ify-space-7) 0;
+  font-family: var(--ify-font-text);
+  font-size: var(--ify-text-lg);
+  color: var(--ify-ink-subtle);
+}
+
+.entry {
+  position: relative;
+  z-index: 1;
+  padding: var(--ify-space-6) 0;
+  border-bottom: 1px solid var(--ify-line);
+}
+
+.entry:last-child {
+  border-bottom: none;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--ify-font-label);
+  font-size: var(--ify-text-xs);
+  letter-spacing: var(--ify-tracking-wide);
+  line-height: 1;
+  padding: 5px 10px;
+  border-radius: var(--ify-radius-pill);
+  background: var(--ify-accent-muted);
+  color: var(--ify-accent-strong);
+}
+
+.tagWarm {
+  background: var(--ify-warm);
+  color: var(--ify-on-warm);
+}
+
+.entryTitle {
+  margin: var(--ify-space-3) 0 0;
+  font-family: var(--ify-font-text);
+  font-weight: var(--ify-weight-medium);
+  font-size: var(--ify-text-xl);
+  line-height: 1.25;
+  letter-spacing: var(--ify-tracking-tight);
+}
+
+.entryTitle a {
+  color: var(--ify-ink);
+  text-decoration: none;
+  transition: color var(--ify-motion-dur) var(--ify-motion-ease-out);
+}
+
+.entryTitle a:hover {
+  color: var(--ify-accent-strong);
+}
+
+.blurb {
+  margin: var(--ify-space-2) 0 0;
+  max-width: 56ch;
+  font-family: var(--ify-font-text);
+  font-size: var(--ify-text-base);
+  line-height: 1.5;
+  color: var(--ify-ink-muted);
+  text-wrap: pretty;
+}
+
+.meta {
+  margin-top: var(--ify-space-4);
+  font-family: var(--ify-font-label);
+  font-size: var(--ify-text-xs);
+  letter-spacing: var(--ify-tracking-normal);
+  color: var(--ify-ink-subtle);
+}
+
+/* Comfortable tap targets on touch screens. */
+@media (pointer: coarse) {
+  .chip {
+    padding: 10px 15px;
+  }
+}
+
+/* Small screens: tighter page padding and a narrower bus gutter (the WireBus follows it). */
+@media (max-width: 640px) {
+  .section {
+    padding: var(--ify-space-7) var(--ify-space-5) var(--ify-space-7);
+  }
+  .feed {
+    padding-left: 46px;
+  }
+}

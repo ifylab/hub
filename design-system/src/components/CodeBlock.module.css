@@ -1,0 +1,30 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+.wrap {
+  position: relative;
+}
+
+.lang {
+  position: absolute;
+  top: var(--ify-space-2);
+  right: var(--ify-space-3);
+  font-family: var(--ify-font-label);
+  font-size: var(--ify-text-xs);
+  color: var(--ify-ink-subtle);
+}
+
+.block {
+  margin: 0;
+  overflow: auto;
+  background: var(--ify-surface);
+  color: var(--ify-ink);
+  border: 1px solid var(--ify-line);
+  border-radius: var(--ify-radius-md);
+  padding: var(--ify-space-4);
+  font-family: var(--ify-font-mono);
+  font-size: var(--ify-text-sm);
+  line-height: var(--ify-leading-normal);
+}
+
+.block code {
+  font-family: inherit;
+}

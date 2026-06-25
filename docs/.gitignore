@@ -1,0 +1,19 @@
+# build output
+dist/
+.astro/
+node_modules/
+
+# environment
+.env
+.env.production
+
+# os / editor
+.DS_Store
+
+# Local tooling and assistant config (not committed)
+CLAUDE.md
+.claude/
+.impeccable/
+
+# local verification artifacts (never public)
+.screenshots/

@@ -1,0 +1,51 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+.tile {
+  position: relative;
+  max-width: 30rem;
+  background: var(--ify-surface);
+  border: 1px solid var(--ify-line);
+  border-radius: var(--ify-radius-md);
+  padding: var(--ify-space-5) var(--ify-space-6);
+}
+
+.stub {
+  position: absolute;
+  overflow: visible;
+}
+
+.stubWire {
+  fill: none;
+  stroke: var(--ify-wire-rest);
+  stroke-width: var(--ify-wire-stroke);
+  stroke-linecap: round;
+}
+
+.pill {
+  position: absolute;
+  top: var(--ify-space-4);
+  right: var(--ify-space-4);
+  font-family: var(--ify-font-label);
+  font-size: var(--ify-text-xs);
+  letter-spacing: var(--ify-tracking-wide);
+  background: var(--ify-warm);
+  color: var(--ify-on-warm);
+  padding: var(--ify-space-1) var(--ify-space-3);
+  border-radius: var(--ify-radius-pill);
+}
+
+.name {
+  margin: var(--ify-space-2) 0 0;
+  font-family: var(--ify-font-display);
+  font-weight: var(--ify-weight-light);
+  font-size: var(--ify-text-2xl);
+  line-height: var(--ify-leading-tight);
+  color: var(--ify-ink);
+}
+
+.desc {
+  margin: var(--ify-space-3) 0 0;
+  max-width: 32ch;
+  font-family: var(--ify-font-text);
+  font-size: var(--ify-text-base);
+  color: var(--ify-ink-muted);
+}

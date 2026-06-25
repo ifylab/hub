@@ -1,0 +1,26 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+.wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  font-family: var(--ify-font-display);
+  font-weight: var(--ify-weight-bold);
+  letter-spacing: var(--ify-tracking-display);
+  line-height: var(--ify-leading-tight);
+  color: var(--ify-ink);
+}
+
+.dot {
+  color: var(--ify-accent);
+}
+
+.sm {
+  font-size: var(--ify-text-2xl);
+}
+
+.md {
+  font-size: var(--ify-display-sm);
+}
+
+.lg {
+  font-size: var(--ify-display-lg);
+}

@@ -1,0 +1,9 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Self-hosted OFL faces. Jost (display, first try — the Century-Gothic/Futura look) and
+   Hanken Grotesk are variable; Commit Mono and Fragment Mono are static weights for code
+   and labels. Secondary display is Archivo: to switch, swap the import below and set
+   --ify-font-display in tokens.json (@import "@fontsource-variable/archivo/index.css";). */
+@import "@fontsource-variable/jost/index.css";
+@import "@fontsource-variable/hanken-grotesk/index.css";
+@import "@fontsource/commit-mono/index.css";
+@import "@fontsource/fragment-mono/400.css";

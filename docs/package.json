@@ -1,0 +1,29 @@
+{
+  "name": "@ifylab/docs",
+  "private": true,
+  "version": "0.0.0",
+  "description": "The ifylab.dev site — the first consumer of the .ify design system.",
+  "license": "Apache-2.0",
+  "author": "Hossein Zargar",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.2.0",
+    "@astrojs/rss": "^4.0.18",
+    "@astrojs/sitemap": "^3.7.3",
+    "@ifylab/design-system": "file:../design-system",
+    "astro": "^5.4.0",
+    "motion": "^12.40.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "typescript": "^5.9.3"
+  }
+}
