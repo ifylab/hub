@@ -1,0 +1,40 @@
+# SPDX-License-Identifier: Apache-2.0
+# Gate a news PR (the manager bot opens claude/news-* branches): build the kit,
+# then run astro check. Content honesty is enforced upstream by the bot, so this
+# workflow only needs the type and build gate.
+name: news-check
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'design-system/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: news-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: |
+            design-system/package-lock.json
+            docs/package-lock.json
+      - name: Build the kit
+        run: |
+          npm --prefix design-system ci
+          npm --prefix design-system run build
+      - name: Astro check
+        run: |
+          npm --prefix docs ci
+          npm --prefix docs run check
