@@ -23,6 +23,16 @@ export const categories = ['AI tools', 'Libraries', 'Reading']
 
 export const entries: NewsEntry[] = [
   {
+    slug: 'build123d-0-11-novtk',
+    tag: 'Libraries',
+    title: 'build123d v0.11.0 drops VTK dependency',
+    blurb: 'The Python CAD library build123d switches to cadquery-ocp-novtk, removing VTK as a transitive dependency.',
+    meta: 'via GitHub releases - gumyr/build123d - 2026-06-18',
+    date: '2026-06-18',
+    source: 'https://github.com/gumyr/build123d/releases/tag/v0.11.0',
+    body: 'build123d v0.11.0 swaps its underlying OCC binding from cadquery-ocp to cadquery-ocp-novtk, cutting VTK out of the dependency tree entirely. For headless installs, CI pipelines, and server-side geometry work, this removes a large and sometimes troublesome transitive package. Users running certain Jupyter-based visualisation workflows will need to reinstall VTK separately. The change is otherwise a drop-in upgrade.',
+  },
+  {
     slug: 'build123d-0-11',
     tag: 'Libraries',
     hot: true,
