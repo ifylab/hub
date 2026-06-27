@@ -23,6 +23,17 @@ export const categories = ['AI tools', 'Libraries', 'Reading']
 
 export const entries: NewsEntry[] = [
   {
+    slug: 'openai-gpt-5-6-sol',
+    tag: 'AI tools',
+    hot: true,
+    title: 'OpenAI previews GPT-5.6 Sol, Terra, and Luna',
+    blurb: 'A new model family — Sol (most capable), Terra (a cheaper balanced option), and Luna (fastest and lowest-cost) — out first as a limited preview to vetted partners through the API and Codex.',
+    meta: 'via OpenAI — openai.com · Jun 2026',
+    date: '2026-06-26',
+    source: 'https://openai.com/index/previewing-gpt-5-6-sol/',
+    body: 'GPT-5.6 arrives as three models: Sol, the flagship; Terra, a lower-cost balanced option that OpenAI says matches GPT-5.5 at roughly half the price; and Luna, the fastest and cheapest. The family targets software engineering, computer use, knowledge work, scientific research, and cybersecurity — where Sol is OpenAI\'s most capable model yet, including long-horizon vulnerability research. That capability is why the rollout is unusual: at the U.S. government\'s request it begins as a limited preview for trusted partners via the API and Codex, with general availability said to follow in the coming weeks.',
+  },
+  {
     slug: 'build123d-0-11',
     tag: 'Libraries',
     hot: true,
