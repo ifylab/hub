@@ -23,6 +23,17 @@ export const categories = ['AI tools', 'Libraries', 'Reading']
 
 export const entries: NewsEntry[] = [
   {
+    slug: 'claude-sonnet-5',
+    tag: 'AI tools',
+    hot: true,
+    title: 'Anthropic ships Claude Sonnet 5, a same-price upgrade to Sonnet 4.6',
+    blurb: 'A drop-in replacement for Sonnet 4.6 at the same price, with its biggest gains in coding and agentic work, adaptive thinking on by default, and a 1M-token context window.',
+    meta: 'via Anthropic — claude.com · Jun 2026',
+    date: '2026-06',
+    source: 'https://platform.claude.com/docs/en/about-claude/models/whats-new-sonnet-5',
+    body: 'Claude Sonnet 5 replaces Sonnet 4.6 at the same price, with its largest gains in coding and agentic work. The defaults shift: adaptive thinking is on unless you turn it off, manual extended thinking and non-default sampling parameters now return errors, and a new tokenizer produces about 30% more tokens for the same text — so token budgets are worth rechecking before migrating. It is also the first Sonnet-tier model with real-time cybersecurity safeguards, and it ships through the Claude API, AWS, Google Cloud, and Microsoft Foundry.',
+  },
+  {
     slug: 'hermes-agent-nous',
     tag: 'AI tools',
     title: 'Hermes Agent — an open agent that learns from its own runs',
