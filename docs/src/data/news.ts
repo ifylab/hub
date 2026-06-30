@@ -23,6 +23,16 @@ export const categories = ['AI tools', 'Libraries', 'Reading']
 
 export const entries: NewsEntry[] = [
   {
+    slug: 'hermes-agent-nous',
+    tag: 'AI tools',
+    title: 'Hermes Agent — an open agent that learns from its own runs',
+    blurb: 'An MIT-licensed agent from Nous Research that creates and refines its own skills from experience, runs across Telegram, Discord, Slack, and the CLI, and works with any LLM provider.',
+    meta: 'via GitHub — github.com/nousresearch · Jun 2026',
+    date: '2026-06-19',
+    source: 'https://github.com/nousresearch/hermes-agent',
+    body: 'Hermes Agent is an open-source agent from Nous Research built around a learning loop: it creates and refines skills from experience, searches its past conversations, and builds a profile of the user across sessions. It runs on anything from a personal VPS to serverless cloud, spawns parallel subagents, works with any LLM provider, and reaches you over Telegram, Discord, Slack, and the CLI. Its procedural memory follows the agentskills.io standard; it is MIT-licensed and at v0.17.0 as of June 2026.',
+  },
+  {
     slug: 'openai-gpt-5-6-sol',
     tag: 'AI tools',
     hot: true,
