@@ -50,7 +50,6 @@ export const connections: ToolConnection[] = [
 export const feeds: ToolFeed[] = [
   { dir: 'in', tool: 'skillmeld', socket: 0, hot: true },
   { dir: 'in', tool: 'skillmeld', socket: 1 },
-  { dir: 'out', tool: 'skillmeld', socket: 0, hot: true },
   { dir: 'in', tool: 'wireify', socket: 1 },
   { dir: 'out', tool: 'wireify', socket: 0, hot: true },
   { dir: 'in', tool: 'object', socket: 0 },
