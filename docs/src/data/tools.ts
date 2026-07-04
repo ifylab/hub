@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
-// The real Tools patch: only what exists. skillmeld ships (active); object.ify is the next
-// tool, shown as "soon" with no description until Hossein gives one. One wire links skillmeld
-// to object.ify — the brand "they wire together" story (Hossein's call); the rest are feed
+// The real Tools patch: only what exists. skillmeld and wireify ship (active); object.ify is
+// the next tool, shown as "soon" with no description until Hossein gives one. Inter-tool wires
+// carry the brand "they wire together" story and must reflect real data flow; the rest are feed
 // wires running to the canvas edges. `details` carries the per-tool page content, added
 // gradually as each tool earns it. See [[project_ify_website_content]].
 import type { Tool, ToolConnection, ToolFeed } from '@ifylab/design-system'
@@ -18,6 +18,16 @@ export const tools: Tool[] = [
     outputs: 1,
   },
   {
+    id: 'wireify',
+    name: 'wireify',
+    description: 'Your own Claude Code, live on the Grasshopper canvas.',
+    status: 'active',
+    x: 470,
+    y: 90,
+    inputs: 2,
+    outputs: 1,
+  },
+  {
     id: 'object',
     name: 'object',
     suffix: '.ify',
@@ -29,13 +39,20 @@ export const tools: Tool[] = [
   },
 ]
 
-// One intentional inter-tool wire: skillmeld's output into object.ify's input.
-export const connections: ToolConnection[] = [{ from: 'skillmeld', to: 'object', toInput: 0 }]
+// Intentional inter-tool wires: skillmeld's output into object.ify's input, and into
+// wireify's — skillmeld genuinely composed the Grasshopper skills wireify ships in its
+// agent homes (vendored, MIT, credited in wireify's PROVENANCE.md).
+export const connections: ToolConnection[] = [
+  { from: 'skillmeld', to: 'object', toInput: 0 },
+  { from: 'skillmeld', to: 'wireify', toInput: 0 },
+]
 
 export const feeds: ToolFeed[] = [
   { dir: 'in', tool: 'skillmeld', socket: 0, hot: true },
   { dir: 'in', tool: 'skillmeld', socket: 1 },
   { dir: 'out', tool: 'skillmeld', socket: 0, hot: true },
+  { dir: 'in', tool: 'wireify', socket: 1 },
+  { dir: 'out', tool: 'wireify', socket: 0, hot: true },
   { dir: 'in', tool: 'object', socket: 0 },
   { dir: 'out', tool: 'object', socket: 0 },
 ]
@@ -62,6 +79,21 @@ export const details: Record<string, ToolDetail> = {
       'One pipeline: ground your repo, discover and rank candidates, security-gate each one, merge into at most three skills, and emit with a provenance record.',
     ],
     repo: 'https://github.com/ifylab/skillmeld',
+    license: 'Apache-2.0',
+  },
+  wireify: {
+    summary: [
+      'Wireify connects your own Claude Code to the live Grasshopper canvas. Drop a Wireify socket, wire your inputs into it, and tell Claude what the component should do. It reads the data actually flowing through your wires — tree shapes, types, samples — writes a typed Python 3 script, runs it, reads Grasshopper’s runtime errors, and fixes them in place while you watch.',
+      'The socket converts into a stock Rhino Python 3 component: same position, wires kept, outputs solved. Saved definitions carry no Wireify dependency — colleagues without the plugin open your files like any other definition.',
+      'Wireify makes no AI calls and needs no account of its own. It hosts an MCP server and connects the Claude Code you already have — your subscription, your data boundaries. Requires Claude Code (paid plan or Console API credits).',
+    ],
+    highlights: [
+      'Reads live wire data before writing a line — tree shapes, types, samples — then verifies its own component against Grasshopper’s runtime errors.',
+      'Converts in place to a stock Python 3 component: wires kept, one undo step, zero plugin dependency in saved files.',
+      'Each definition gets its own agent home with built-in Grasshopper skills and a memory that accumulates what worked — Claude starts warm and gets warmer per file.',
+      'Built on the official MCP C# SDK at the current protocol revision — long-running operations run as background MCP tasks, and sessions default to Sonnet 5 at high reasoning effort.',
+    ],
+    repo: 'https://github.com/ifylab/wireify',
     license: 'Apache-2.0',
   },
 }

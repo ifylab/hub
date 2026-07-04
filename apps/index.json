@@ -7,6 +7,13 @@
       "description": "Discover existing community Claude skills and merge the best into one tailored, security-scanned set.",
       "language": "Python",
       "status": "active"
+    },
+    {
+      "name": "wireify",
+      "repo": "https://github.com/ifylab/wireify",
+      "description": "Your own Claude Code, live in Grasshopper: sockets stage inputs, Claude converts them in place into stock Python 3 components.",
+      "language": "C#",
+      "status": "active"
     }
   ]
 }

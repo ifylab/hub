@@ -20,6 +20,7 @@ Apache 2.0; contributions accepted under the same license.
 Each tool lives in its own repository under [ifylab](https://github.com/ifylab) and is listed here as it ships.
 
 - **[skillmeld](https://github.com/ifylab/skillmeld)** — discovers existing community Claude skills for a use case, security-scans them, and merges the best few into one tailored set. Composes existing skills rather than generating new ones.
+- **[wireify](https://github.com/ifylab/wireify)** — your own Claude Code, live in Grasshopper. Stage inputs on a socket, say what the component should do; it converts in place into a stock Python 3 component, and saved files carry no plugin dependency. On the Rhino Package Manager.
 
 ## About this repository
 
