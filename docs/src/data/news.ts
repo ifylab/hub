@@ -19,13 +19,35 @@ export interface NewsEntry {
   body?: string
 }
 
-export const categories = ['AI tools', 'Libraries', 'Reading']
+export const categories = ['.ify', 'AI tools', 'Libraries', 'Reading']
 
 export const entries: NewsEntry[] = [
   {
+    slug: 'skillmeld-0-2-0',
+    tag: '.ify',
+    tagWarm: true,
+    title: 'skillmeld 0.2.0 — discovery now works out of the box',
+    blurb: 'The hosted catalog is live: a signed, hash-pinned index of community skills rebuilt weekly, so discover and fetch work with zero setup. Plus hardened Skills-API emit and a security bump.',
+    meta: 'via ifylab — github.com/ifylab/skillmeld · Jul 2026',
+    date: '2026-07-26',
+    source: 'https://github.com/ifylab/skillmeld',
+    body: 'skillmeld 0.2.0 ships the hosted data layer. Catalog sync now pulls a signed manifest — Ed25519-signed, hash-pinned content, anti-rollback — from data.ifylab.dev, rebuilt weekly from community skill repositories, with a verdict index scanned at build time. Hosted verdicts are advisory only: the local security scan always runs, and a hosted PASS never overrides it. Emitting to the Claude Skills API now pins the current beta headers and states the workspace-wide sharing scope in the provenance record. Also in this release: per-skill license detection for repositories that license each skill in its own folder, and a dependency security bump.',
+  },
+  {
+    slug: 'wireify-0-2-0',
+    tag: '.ify',
+    tagWarm: true,
+    hot: true,
+    title: 'Wireify 0.2.0 — your own Claude Code, live in Grasshopper',
+    blurb: 'The second .ify tool is on the Rhino Package Manager: stage inputs on a Wireify socket, say what the component should do, and Claude converts it in place into a stock Python 3 component. Saved files carry no plugin dependency.',
+    meta: 'via ifylab — github.com/ifylab/wireify · Jul 2026',
+    date: '2026-07-24',
+    source: 'https://github.com/ifylab/wireify',
+    body: 'Wireify 0.2.0 is out — the second .ify tool, on the Rhino Package Manager and Food4Rhino. It connects the Claude Code you already have to the live Grasshopper canvas: stage inputs on a Wireify socket, describe what the component should do, and Claude reads the data actually flowing through your wires, writes a typed Python 3 script, runs it, and fixes it against Grasshopper’s runtime errors. The socket then converts in place into a stock Python 3 component, so saved definitions carry no plugin dependency. It also reads legacy IronPython 2 components and ports them to CPython 3. Rhino 8 SR18 or newer on Windows, with Claude Code on a paid plan; search "wireify" in _PackageManager.',
+  },
+  {
     slug: 'claude-sonnet-5',
     tag: 'AI tools',
-    hot: true,
     title: 'Anthropic ships Claude Sonnet 5, a same-price upgrade to Sonnet 4.6',
     blurb: 'A drop-in replacement for Sonnet 4.6 at the same price, with its biggest gains in coding and agentic work, adaptive thinking on by default, and a 1M-token context window.',
     meta: 'via Anthropic — claude.com · Jun 2026',

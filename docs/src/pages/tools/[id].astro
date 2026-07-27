@@ -38,11 +38,29 @@ const [lede, ...rest] = detail?.summary ?? []
     }
 
     {
+      detail?.media ? (
+        <div class="media">
+          {detail.media.map((m) => (
+            <figure class="shot">
+              <img src={m.src} alt={m.alt} loading="lazy" decoding="async" />
+              {m.caption ? <figcaption>{m.caption}</figcaption> : null}
+            </figure>
+          ))}
+        </div>
+      ) : null
+    }
+
+    {
       detail?.repo ? (
         <div class="actions">
           <a class="cta" href={detail.repo} target="_blank" rel="noopener noreferrer">
             View on GitHub <span aria-hidden="true">{'→'}</span>
           </a>
+          {detail.links?.map((l) => (
+            <a class="cta secondary" href={l.href} target="_blank" rel="noopener noreferrer">
+              {l.label} <span aria-hidden="true">{'→'}</span>
+            </a>
+          ))}
           {detail.license ? <span class="license">{detail.license}</span> : null}
         </div>
       ) : null
@@ -141,9 +159,32 @@ const [lede, ...rest] = detail?.summary ?? []
     border-radius: 50%;
     background: var(--ify-accent);
   }
+  .media {
+    display: grid;
+    gap: var(--ify-space-6);
+    margin-top: var(--ify-space-7);
+  }
+  .shot {
+    margin: 0;
+  }
+  .shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--ify-line);
+    border-radius: var(--ify-radius-md);
+  }
+  .shot figcaption {
+    margin-top: var(--ify-space-3);
+    max-width: 66ch;
+    font-family: var(--ify-font-label);
+    font-size: var(--ify-text-sm);
+    color: var(--ify-ink-subtle);
+  }
   .actions {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: var(--ify-space-5);
     margin-top: var(--ify-space-7);
   }
@@ -162,6 +203,15 @@ const [lede, ...rest] = detail?.summary ?? []
   }
   .cta:hover {
     background: var(--ify-accent);
+  }
+  .cta.secondary {
+    color: var(--ify-accent-strong);
+    background: transparent;
+    border: 1px solid var(--ify-accent-strong);
+    padding: 11px 19px;
+  }
+  .cta.secondary:hover {
+    background: var(--ify-accent-muted);
   }
   .license {
     font-family: var(--ify-font-label);

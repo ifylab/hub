@@ -12,7 +12,7 @@ export const GET: APIRoute = (context) =>
     items: entries.map((e) => ({
       title: e.title,
       description: e.blurb,
-      link: `/news/${e.slug}/`,
+      link: `/news/${e.slug}`,
       pubDate: new Date(e.date),
     })),
   })

@@ -61,8 +61,12 @@ export interface ToolDetail {
   summary: string[]
   /** A few concrete points: what makes it different, how it works. */
   highlights?: string[]
+  /** Demo stills, served from public/media/tools/. */
+  media?: { src: string; alt: string; caption?: string }[]
   repo?: string
   license?: string
+  /** Outbound links beside the repo CTA — marketplace listings and the like. */
+  links?: { label: string; href: string }[]
 }
 
 // Per-tool page content. Keyed by tool id; a tool with no entry shows the minimal scaffold.
@@ -76,6 +80,7 @@ export const details: Record<string, ToolDetail> = {
       'Composes, never generates — every line in a merged skill traces byte-for-byte back to a source, enforced by a deterministic verifier.',
       'The mechanical work — parsing, security scanning, deduplicating, conflict detection, packaging — runs as deterministic Python with zero model calls.',
       'One pipeline: ground your repo, discover and rank candidates, security-gate each one, merge into at most three skills, and emit with a provenance record.',
+      'Discovery runs against a signed hosted catalog — Ed25519-signed manifest, hash-pinned content, refreshed weekly — and the local security gate always has the final word.',
     ],
     repo: 'https://github.com/ifylab/skillmeld',
     license: 'Apache-2.0',
@@ -85,6 +90,7 @@ export const details: Record<string, ToolDetail> = {
       'Wireify connects your own Claude Code to the live Grasshopper canvas. Drop a Wireify socket, wire your inputs into it, and tell Claude what the component should do. It reads the data actually flowing through your wires — tree shapes, types, samples — writes a typed Python 3 script, runs it, reads Grasshopper’s runtime errors, and fixes them in place while you watch.',
       'The socket converts into a stock Rhino Python 3 component: same position, wires kept, outputs solved. Saved definitions carry no Wireify dependency — colleagues without the plugin open your files like any other definition.',
       'Wireify makes no AI calls and needs no account of its own. It hosts an MCP server and connects the Claude Code you already have — your subscription, your data boundaries. Requires Claude Code (paid plan or Console API credits).',
+      'Install from the Rhino Package Manager: in Rhino 8 on Windows (SR18 or newer), run _PackageManager and search "wireify", then restart Rhino. Mac and Rhino 7 support is planned.',
     ],
     highlights: [
       'Reads live wire data before writing a line — tree shapes, types, samples — then verifies its own component against Grasshopper’s runtime errors.',
@@ -92,7 +98,25 @@ export const details: Record<string, ToolDetail> = {
       'Each definition gets its own agent home with built-in Grasshopper skills and a memory that accumulates what worked — Claude starts warm and gets warmer per file.',
       'Built on the official MCP C# SDK at the current protocol revision — long-running operations run as background MCP tasks, and sessions default to Sonnet 5 at high reasoning effort.',
     ],
+    media: [
+      {
+        src: '/media/tools/wireify/truss-from-json.png',
+        alt: 'A roof truss generated from a JSON panel through one converted component, with named chord, vertical, and diagonal outputs',
+        caption: 'A roof truss from a JSON panel, through one converted component — named chord, vertical, and diagonal outputs.',
+      },
+      {
+        src: '/media/tools/wireify/height-input-question.png',
+        alt: 'Claude asks how to treat a Panel-fed height input before writing any code',
+        caption: 'Claude asks how to treat a Panel-fed height input before writing any code.',
+      },
+      {
+        src: '/media/tools/wireify/brick-wall-session.png',
+        alt: 'Claude reports the traced upstream chain and the user’s answers before building',
+        caption: 'The traced upstream chain and the user’s decisions, reported before the build.',
+      },
+    ],
     repo: 'https://github.com/ifylab/wireify',
     license: 'Apache-2.0',
+    links: [{ label: 'Food4Rhino', href: 'https://www.food4rhino.com/en/app/wireify' }],
   },
 }
