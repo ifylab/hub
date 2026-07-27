@@ -26,6 +26,11 @@
   max-width: 360px;
 }
 
+.brandLogo {
+  display: block;
+  line-height: 0;
+}
+
 .brandLogoImg {
   height: 24px;
   width: auto;

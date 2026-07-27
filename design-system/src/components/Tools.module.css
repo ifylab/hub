@@ -211,6 +211,9 @@
   background: var(--ify-surface);
   border: 1px solid var(--ify-line);
   border-radius: var(--ify-radius-md);
+  /* The anchor itself carries the brand ink so nothing inside it can ever fall
+     back to the browser's default link blue. */
+  color: var(--ify-ink);
   text-decoration: none;
   transition: border-color var(--ify-motion-dur) var(--ify-motion-ease-out);
 }
@@ -229,6 +232,22 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--ify-space-4);
+}
+
+/* The stacked list's counterpart of .nameLink: same display voice, one step down
+   for the card scale. */
+.name {
+  font-family: var(--ify-font-display);
+  font-weight: var(--ify-weight-light);
+  font-size: var(--ify-text-xl);
+  letter-spacing: var(--ify-tracking-tight);
+  line-height: 1.1;
+  color: var(--ify-ink);
+  transition: color var(--ify-motion-dur) var(--ify-motion-ease-out);
+}
+
+.listLink:hover .name {
+  color: var(--ify-accent-strong);
 }
 
 .listDesc {

@@ -50,7 +50,7 @@ export function NewsFeed({
 
   return (
     <section className={[styles.section, className].filter(Boolean).join(' ')}>
-      <div className={styles.head}>
+      <div>
         <h2 className={styles.title}>{heading}</h2>
         <p className={styles.lead}>{blurb}</p>
       </div>

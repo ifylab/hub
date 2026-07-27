@@ -160,12 +160,40 @@ const isCurrent = (href: string) =>
     outline-offset: 3px;
   }
 
+  /* Phone tier: everything compresses one step so brand + links + toggle hold ONE line
+     on real phones (393/390/375/360). The topbar's flex-wrap stays only as the valve for
+     extreme text zoom. */
   @media (max-width: 32rem) {
+    .topbar {
+      padding-left: max(var(--ify-space-5), env(safe-area-inset-left));
+      padding-right: max(var(--ify-space-5), env(safe-area-inset-right));
+      column-gap: var(--ify-space-4);
+    }
+    .brand-logo {
+      height: 20px;
+    }
     .nav {
-      gap: var(--ify-space-4);
+      gap: var(--ify-space-3);
     }
     .actions {
-      gap: var(--ify-space-4);
+      gap: var(--ify-space-3);
+    }
+    .link {
+      font-size: var(--ify-text-sm);
+    }
+    .toggle {
+      padding: 6px 11px;
+    }
+  }
+
+  /* Narrow-phone tier (360px and down): tighten the remaining slack. */
+  @media (max-width: 22.5rem) {
+    .topbar {
+      padding-left: max(var(--ify-space-4), env(safe-area-inset-left));
+      padding-right: max(var(--ify-space-4), env(safe-area-inset-right));
+    }
+    .nav {
+      gap: var(--ify-space-2);
     }
   }
 
@@ -176,6 +204,15 @@ const isCurrent = (href: string) =>
     }
     .toggle {
       padding: 10px 15px;
+    }
+  }
+
+  @media (pointer: coarse) and (max-width: 32rem) {
+    .link {
+      padding: 8px 1px;
+    }
+    .toggle {
+      padding: 8px 11px;
     }
   }
 </style>

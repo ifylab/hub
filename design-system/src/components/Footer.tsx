@@ -78,7 +78,7 @@ export function Footer({
           {columns.length > 0 ? (
             <nav className={styles.cols} aria-label="Footer">
               {columns.map((col) => (
-                <div className={styles.col} key={col.heading}>
+                <div key={col.heading}>
                   <h2 className={styles.colHeading}>{col.heading}</h2>
                   <ul className={styles.colList}>
                     {col.links.map((l) => (
