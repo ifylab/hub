@@ -40,10 +40,10 @@ export const tools: Tool[] = [
   {
     id: 'robotic-constructability',
     name: 'robotic constructability',
-    description: 'Explore 999 robotically assembled CLT house designs.',
+    description: '999 robot-assembled CLT houses.',
     status: 'active',
     x: 240,
-    y: 430,
+    y: 460,
     inputs: 1,
     outputs: 1,
   },
