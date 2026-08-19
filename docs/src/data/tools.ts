@@ -37,6 +37,16 @@ export const tools: Tool[] = [
     inputs: 1,
     outputs: 1,
   },
+  {
+    id: 'robotic-constructability',
+    name: 'robotic constructability',
+    description: 'Explore 999 robotically assembled CLT house designs.',
+    status: 'active',
+    x: 240,
+    y: 430,
+    inputs: 1,
+    outputs: 1,
+  },
 ]
 
 // Intentional inter-tool wires: skillmeld's output into object.ify's input, and into
@@ -54,6 +64,8 @@ export const feeds: ToolFeed[] = [
   { dir: 'out', tool: 'wireify', socket: 0, hot: true },
   { dir: 'in', tool: 'object', socket: 0 },
   { dir: 'out', tool: 'object', socket: 0 },
+  { dir: 'in', tool: 'robotic-constructability', socket: 0 },
+  { dir: 'out', tool: 'robotic-constructability', socket: 0, hot: true },
 ]
 
 export interface ToolDetail {
@@ -67,6 +79,9 @@ export interface ToolDetail {
   license?: string
   /** Outbound links beside the repo CTA — marketplace listings and the like. */
   links?: { label: string; href: string }[]
+  /** Live app embedded on the page. `src` is the deployed origin; the page appends
+   *  `?embed=1&theme=` and keeps the frame on the site theme via `ify:theme` postMessage. */
+  app?: { src: string }
 }
 
 // Per-tool page content. Keyed by tool id; a tool with no entry shows the minimal scaffold.
@@ -118,5 +133,42 @@ export const details: Record<string, ToolDetail> = {
     repo: 'https://github.com/ifylab/wireify',
     license: 'Apache-2.0',
     links: [{ label: 'Food4Rhino', href: 'https://www.food4rhino.com/en/app/wireify' }],
+  },
+  'robotic-constructability': {
+    summary: [
+      'Robotic Constructability is an interactive explorer for 999 simulated designs of a robotically assembled cross-laminated timber (CLT) house — the open-source companion to a peer-reviewed study in Automation in Construction (2026).',
+      'Every design is scored on four objectives — embodied carbon, mobile-robot travel time, and how comfortably a robotic arm places the wall and roof panels — plus two practicalities: CLT master-sheet demand and assembly steps needing temporary support. Set your own priorities and the top designs re-rank live; scatter and parallel-coordinate views carry the live Pareto front, and every filter follows you across tabs.',
+    ],
+    highlights: [
+      'Live Pareto front on any score pair — dominated designs dimmed, drag to filter, click a dot for its design card with the isometric render.',
+      'Question-phrased priority sliders re-rank all 999 designs as you drag; a shared link reproduces the exact ranking.',
+      'Every metric named for humans, with the paper’s terms and definitions one tab away; correlations are computed live from the shipped dataset.',
+      'Runs entirely in the browser from a static bundle — the dataset and renders are the study’s own research artifacts, reused as-is.',
+    ],
+    media: [
+      {
+        src: '/media/tools/robotic-constructability/summary.png',
+        alt: 'Summary view: six priority sliders with verbal levels beside live top-design cards with renders and score bars',
+        caption: 'Priority sliders with verbal levels; the top designs re-rank live as you drag.',
+      },
+      {
+        src: '/media/tools/robotic-constructability/explore.png',
+        alt: 'Explore view: embodied carbon against roof robot-friendliness with the live Pareto front and an open design card',
+        caption: 'Any two scores plotted with the live Pareto front; a click opens the design card.',
+      },
+      {
+        src: '/media/tools/robotic-constructability/gallery.png',
+        alt: 'Gallery view: a grid of isometric CLT house renders sorted by embodied carbon',
+        caption: 'All renders in one sortable grid.',
+      },
+    ],
+    repo: 'https://github.com/goldsmith323/Robotic-Constructability',
+    license: 'Apache-2.0',
+    links: [
+      { label: 'Open full screen', href: 'https://constructability.ifylab.dev' },
+      { label: 'The paper', href: 'https://doi.org/10.1016/j.autcon.2025.106637' },
+      { label: 'Dissertation', href: 'https://etda.libraries.psu.edu/catalog/26038szz188' },
+    ],
+    app: { src: 'https://constructability.ifylab.dev' },
   },
 }

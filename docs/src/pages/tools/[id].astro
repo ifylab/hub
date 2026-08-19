@@ -15,6 +15,7 @@ const { tool } = Astro.props
 const detail = details[tool.id]
 const statusLabel: Record<string, string> = { active: 'active', beta: 'beta', soon: 'coming soon' }
 const [lede, ...rest] = detail?.summary ?? []
+const app = detail?.app
 ---
 
 <Base title={`${tool.name}${tool.suffix ?? ''} — .ify`} description={detail?.summary[0] ?? tool.description ?? tool.name}>
@@ -25,6 +26,27 @@ const [lede, ...rest] = detail?.summary ?? []
     </div>
 
     {lede ? <p class="lede">{lede}</p> : tool.description ? <p class="lede">{tool.description}</p> : null}
+
+    {
+      app ? (
+        <section class="app">
+          <div class="app-head">
+            <span class="app-label">try it</span>
+            <a class="app-full" href={app.src} target="_blank" rel="noopener noreferrer">
+              open full screen <span aria-hidden="true">{'→'}</span>
+            </a>
+          </div>
+          <iframe
+            class="app-frame"
+            title={`${tool.name}${tool.suffix ?? ''} — live`}
+            data-src={app.src}
+            loading="lazy"
+            allow="fullscreen"
+          />
+        </section>
+      ) : null
+    }
+
     {rest.map((p) => <p class="body">{p}</p>)}
 
     {
@@ -225,4 +247,65 @@ const [lede, ...rest] = detail?.summary ?? []
     font-size: var(--ify-text-sm);
     color: var(--ify-ink-subtle);
   }
+  .app {
+    margin-top: var(--ify-space-7);
+    width: min(1160px, calc(100vw - 2 * var(--ify-space-6)));
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .app-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ify-space-5);
+    margin-bottom: var(--ify-space-3);
+  }
+  .app-label {
+    font-family: var(--ify-font-label);
+    font-size: var(--ify-text-xs);
+    letter-spacing: var(--ify-tracking-wide);
+    color: var(--ify-ink-subtle);
+  }
+  .app-full {
+    font-family: var(--ify-font-label);
+    font-size: var(--ify-text-sm);
+    color: var(--ify-accent-strong);
+    text-decoration: none;
+  }
+  .app-full:hover {
+    text-decoration: underline;
+  }
+  .app-frame {
+    display: block;
+    width: 100%;
+    height: clamp(600px, 82vh, 960px);
+    border: 1px solid var(--ify-line);
+    border-radius: var(--ify-radius-md);
+    background: var(--ify-surface);
+  }
 </style>
+
+<script>
+  // The embedded app follows the site theme: ?theme= seeds it pre-paint, and an
+  // ify:theme postMessage tracks the toggle. The observer is module-scoped so
+  // view-transition navigations rebind instead of stacking.
+  let appThemeObserver: MutationObserver | null = null
+  function initToolApp() {
+    appThemeObserver?.disconnect()
+    appThemeObserver = null
+    const frame = document.querySelector<HTMLIFrameElement>('.app-frame')
+    const base = frame?.dataset.src
+    if (!frame || !base) return
+    const mode = () => (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light')
+    frame.src = `${base}/?embed=1&theme=${mode()}`
+    appThemeObserver = new MutationObserver(() => {
+      frame.contentWindow?.postMessage({ type: 'ify:theme', mode: mode() }, base)
+    })
+    appThemeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    })
+  }
+  document.addEventListener('astro:page-load', initToolApp)
+</script>
