@@ -23,6 +23,29 @@ export const categories = ['.ify', 'AI tools', 'Libraries', 'Reading']
 
 export const entries: NewsEntry[] = [
   {
+    slug: 'robotic-constructability',
+    tag: '.ify',
+    tagWarm: true,
+    hot: true,
+    title: 'Robotic constructability — a PhD design explorer, rebuilt for the browser',
+    blurb: 'The third .ify tool: 999 simulated designs of a robotically assembled CLT house, scored on carbon, robot time, and how comfortably a robotic arm places the panels. Live Pareto fronts, priority re-ranking, parallel axes, and every render, no install.',
+    meta: 'via ifylab — constructability.ifylab.dev · Aug 2026',
+    date: '2026-08-18',
+    source: 'https://constructability.ifylab.dev',
+    body: 'Robotic constructability is live at constructability.ifylab.dev and embedded on this site. It is the open-source companion to Zargar, Duarte and Brown, Design exploration of robotically assembled cross-laminated timber houses with sequential path planning (Automation in Construction 181, 2026), and to the PhD dissertation behind it. Each of the 999 designs is a small CLT house scored on embodied carbon, mobile-robot travel time, and how comfortably a robotic arm places the wall and roof panels, plus CLT sheet demand and the assembly steps that need temporary support. Five views put the whole design space in the browser: question-phrased priority sliders that re-rank all 999 live, a scatter over any score pair with the live Pareto front, brushable parallel axes, a gallery of every render, and the methodology with live-computed correlations. State travels in the URL, so a shared link reproduces a ranking or opens a design. Apache-2.0, on GitHub.',
+  },
+  {
+    slug: 'skillmeld-0-3-0',
+    tag: '.ify',
+    tagWarm: true,
+    title: 'skillmeld 0.3.0 — a wider security gate and a scout for SkillsMP',
+    blurb: 'Four new core rules close gaps a taxonomy coverage benchmark surfaced, NVIDIA SkillSpector joins the optional scanners, the weekly catalog build detects licenses with scancode, and a new scout searches the SkillsMP registry for candidates.',
+    meta: 'via ifylab — github.com/ifylab/skillmeld · Aug 2026',
+    date: '2026-08-19',
+    source: 'https://github.com/ifylab/skillmeld',
+    body: 'skillmeld 0.3.0 widens the security gate. Four core rules cover cron and login persistence, ClickFix-style paste-to-fix lures, and directed false reassurance, and a coverage benchmark now maps every publicly named category of the agentskill.sh threat model to at least one live rule. NVIDIA SkillSpector joins semgrep and gitleaks as a PATH-optional, escalate-only scanner that always runs without an LLM, so scanned content stays on the machine. The weekly catalog build consults scancode-toolkit for license texts the lightweight fingerprints cannot identify, keeping gold-standard SPDX detection in the signed catalog while the client stays light. A new skillsmp-scout command runs budget-capped discovery over the SkillsMP registry and prints candidate repositories; catalog membership stays a hand-curated decision. Also in this release: a scan without an optional scanner now says so plainly, the quality gate warns instead of failing on inherited html-like tags, marketplace emit carries a version so plugin updates see a re-composition, and cryptography moved to 50.0.',
+  },
+  {
     slug: 'skillmeld-0-2-0',
     tag: '.ify',
     tagWarm: true,
@@ -37,7 +60,6 @@ export const entries: NewsEntry[] = [
     slug: 'wireify-0-2-0',
     tag: '.ify',
     tagWarm: true,
-    hot: true,
     title: 'Wireify 0.2.0 — your own Claude Code, live in Grasshopper',
     blurb: 'The second .ify tool is on the Rhino Package Manager: stage inputs on a Wireify socket, say what the component should do, and Claude converts it in place into a stock Python 3 component. Saved files carry no plugin dependency.',
     meta: 'via ifylab — github.com/ifylab/wireify · Jul 2026',
