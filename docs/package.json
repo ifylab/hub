@@ -17,7 +17,7 @@
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
     "@ifylab/design-system": "file:../design-system",
-    "astro": "^7.1.4",
+    "astro": "^7.2.8",
     "motion": "^12.40.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
