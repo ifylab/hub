@@ -11,14 +11,14 @@
     {
       "name": "wireify",
       "repo": "https://github.com/ifylab/wireify",
-      "description": "Your own Claude Code, live in Grasshopper: sockets stage inputs, Claude converts them in place into stock Python 3 components.",
+      "description": "Your own Claude Code, live in Grasshopper: sockets stage inputs, Claude converts them in place into stock Python 3 components, and each definition can carry a companion web app.",
       "language": "C#",
       "status": "active"
     },
     {
       "name": "robotic constructability",
       "repo": "https://github.com/goldsmith323/Robotic-Constructability",
-      "description": "Interactive explorer for 999 robotically assembled CLT house designs — live Pareto fronts, priority re-ranking, and every render in the browser.",
+      "description": "Interactive explorer for 999 robotically assembled CLT house designs \u2014 live Pareto fronts, priority re-ranking, and every render in the browser.",
       "language": "TypeScript",
       "status": "active"
     }

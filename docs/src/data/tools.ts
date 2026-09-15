@@ -123,14 +123,19 @@ export const details: Record<string, ToolDetail> = {
     summary: [
       'Wireify connects your own Claude Code to the live Grasshopper canvas. Drop a Wireify socket, wire your inputs into it, and tell Claude what the component should do. It reads the data actually flowing through your wires — tree shapes, types, samples — writes a typed Python 3 script, runs it, reads Grasshopper’s runtime errors, and fixes them in place while you watch.',
       'The socket converts into a stock Rhino Python 3 component: same position, wires kept, outputs solved. Saved definitions carry no Wireify dependency — colleagues without the plugin open your files like any other definition.',
+      'Since 0.3 each definition can also have a companion web app: a browser page the plugin serves on your own machine, in step with the canvas both ways. Sliders and panels on the page push into Grasshopper; every solve pushes back into the page’s 3D view, drawings and figures; one button bakes a frozen HTML report. Claude builds the page from the definition, and using it needs no Claude session. HALO is one of them: a tensegrity study from a 2021 manuscript, built this way and running on this site.',
       'Wireify makes no AI calls and needs no account of its own. It hosts an MCP server and connects the Claude Code you already have — your subscription, your data boundaries. Requires Claude Code (paid plan or Console API credits).',
-      'Install from the Rhino Package Manager: in Rhino 8 on Windows (SR18 or newer), run _PackageManager and search "wireify", then restart Rhino. Mac and Rhino 7 support is planned.',
+      'Install from the Rhino Package Manager: in Rhino 8 on Windows (SR18 or newer), run _PackageManager and search "wireify", then restart Rhino. Mac support is planned; Rhino 7 is not supported. Version 0.2.0 no longer connects to current Claude Code; the Package Manager updates it.',
+    ],
+    cta: [
+      { label: 'See a companion app', href: '/tools/halo' },
     ],
     highlights: [
       'Reads live wire data before writing a line — tree shapes, types, samples — then verifies its own component against Grasshopper’s runtime errors.',
       'Converts in place to a stock Python 3 component: wires kept, one undo step, zero plugin dependency in saved files.',
       'Each definition gets its own agent home with built-in Grasshopper skills and a memory that accumulates what worked — Claude starts warm and gets warmer per file.',
-      'Built on the official MCP C# SDK at the current protocol revision — long-running operations run as background MCP tasks, and sessions default to Sonnet 5 at high reasoning effort.',
+      'Every definition can carry a companion web app — sliders, figures, drawings and a 3D view in the browser, in step with the canvas both ways, no Claude session needed to use it.',
+      'Built on the official MCP C# SDK at the current protocol revision, with 22 canvas tools including a whole-definition wiring graph; sessions default to Sonnet 5 at high reasoning effort.',
     ],
     media: [
       {
