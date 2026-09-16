@@ -1,0 +1,1144 @@
+<!doctype html>
+<!-- HALO, ported to run on its own: the Form Generation stage of the tensegrity
+     hollow-rope workflow (Zargar and Alaghmandan 2021), live on W1 tensegrity-module.
+     This file is the page author's; kit/ is Wireify's, re-synced from the Wireify tree.
+     Re-theme in theme.css. -->
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HALO — a tensegrity rope you can walk through</title>
+<meta name="description" content="HALO weaves rings of steel struts and cables into a hollow rope with a clear walkway down the middle. Six numbers shape it; the model, the drawings and the clearance check re-solve in your browser.">
+<link rel="canonical" href="https://halo.ifylab.dev/">
+<link rel="icon" href="./kit/ify-mark.svg" type="image/svg+xml">
+<script>
+  (function () {
+    var stored = null;
+    try { stored = localStorage.getItem('ify-theme'); } catch (e) {}
+    var p = new URLSearchParams(location.search).get('theme');
+    var m = (p === 'dark' || p === 'light' || p === 'auto') ? p : stored;
+    if (m !== 'dark' && m !== 'light' && m !== 'auto') m = 'auto';
+    document.documentElement.setAttribute('data-theme', m);
+  })();
+</script>
+<script type="importmap">
+  {"imports": {"three": "./kit/vendor/three.module.min.js"}}
+</script>
+<link rel="stylesheet" href="./kit/ify-fonts.css">
+<link rel="stylesheet" href="./kit/ify-tokens.css">
+<link rel="stylesheet" href="./kit/ify-app.css">
+<link rel="stylesheet" href="./theme.css">
+<style>
+  /* Header and footer read like Robotic Constructability's: a brand with the accent dot, a
+     row of section links, a theme pill; a footer with the wordmark, one line of provenance,
+     and an output bank where each link wires off. */
+  .halo-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--ify-space-2) var(--ify-space-6);
+    padding: var(--ify-space-3) var(--ify-space-5);
+    border-bottom: 1px solid var(--ify-line);
+    background: var(--ify-surface);
+    position: sticky;
+    top: 0;
+    z-index: 6;
+  }
+  .halo-brand {
+    font-family: var(--ify-font-display);
+    font-size: var(--ify-text-lg);
+    font-weight: var(--ify-weight-medium);
+    letter-spacing: var(--ify-tracking-tight);
+    white-space: nowrap;
+    color: var(--ify-ink);
+  }
+  .halo-brand__dot { color: var(--ify-accent); font-weight: var(--ify-weight-bold, 700); }
+  .halo-head__right { margin-inline-start: auto; display: flex; align-items: center; gap: var(--ify-space-3); }
+  .halo-head .ify-toggle {
+    font-family: var(--ify-font-label);
+    font-size: var(--ify-text-xs);
+    letter-spacing: var(--ify-tracking-wide);
+    text-transform: lowercase;
+    background: none;
+    border: 1px solid var(--ify-line-strong);
+    border-radius: var(--ify-radius-pill);
+    padding: var(--ify-space-1) var(--ify-space-3);
+    color: var(--ify-ink);
+    cursor: pointer;
+  }
+  @media (max-width: 860px) {
+    .halo-head { padding: var(--ify-space-2) var(--ify-space-3); gap: var(--ify-space-2) var(--ify-space-4); }
+    .halo-brand { font-size: var(--ify-text-base); }
+  }
+  /* Inside the site's frame the page carries no chrome of its own. */
+  [data-embed] .halo-head { display: none; }
+  [data-embed] .halo-rail { top: var(--ify-space-3); }
+
+  .halo-foot { border-top: 1px solid var(--ify-line); background: var(--ify-surface); }
+  .halo-foot__inner { max-width: 1100px; margin: 0 auto; padding: var(--ify-space-8) var(--ify-space-7); }
+  .halo-foot__top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ify-space-7) var(--ify-space-8); flex-wrap: wrap; }
+  .halo-foot__brand { flex: 1 1 260px; min-width: 0; max-width: 380px; }
+  .halo-wordmark {
+    display: inline-flex;
+    align-items: baseline;
+    font-family: var(--ify-font-display);
+    font-weight: var(--ify-weight-bold, 700);
+    letter-spacing: var(--ify-tracking-tight);
+    font-size: var(--ify-text-2xl, 1.5rem);
+    line-height: 1.1;
+    color: var(--ify-ink);
+  }
+  .halo-wordmark__dot { color: var(--ify-accent); }
+  .halo-foot__desc {
+    margin: var(--ify-space-4) 0 0;
+    max-width: 38ch;
+    font-family: var(--ify-font-text);
+    font-size: var(--ify-text-base);
+    line-height: 1.55;
+    color: var(--ify-ink-muted);
+    text-wrap: pretty;
+  }
+  .halo-foot__bank { display: flex; flex-direction: column; gap: var(--ify-space-2); align-self: center; }
+  .halo-foot__row { display: flex; align-items: center; gap: var(--ify-space-1); }
+  .halo-foot__row svg { display: block; flex: none; overflow: visible; }
+  .halo-foot__wire { fill: none; stroke: var(--ify-wire-rest); stroke-width: 2px; stroke-linecap: round; }
+  .halo-foot__socket { fill: var(--ify-socket); }
+  .halo-foot__link {
+    font-family: var(--ify-font-text);
+    font-weight: var(--ify-weight-medium);
+    font-size: var(--ify-text-base);
+    color: var(--ify-ink);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color var(--ify-motion-dur) var(--ify-motion-ease-out);
+  }
+  .halo-foot__link .arrow { color: var(--ify-accent); }
+  .halo-foot__link:hover { color: var(--ify-accent-strong); }
+  .halo-foot__base { margin-top: var(--ify-space-8); padding-top: var(--ify-space-5); border-top: 1px solid var(--ify-line); }
+  .halo-foot__copy { font-family: var(--ify-font-label); font-size: var(--ify-text-xs); color: var(--ify-ink-subtle); }
+
+  /* The hook: a question and a lede beside a short story card, the way the other .ify
+     apps open; one column under 860px. */
+  .halo-hook-block {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(16rem, 1fr);
+    gap: var(--ify-space-5) var(--ify-space-7);
+    align-items: end;
+    padding-block: var(--ify-space-4) var(--ify-space-5);
+  }
+  @media (max-width: 860px) { .halo-hook-block { grid-template-columns: minmax(0, 1fr); align-items: start; } }
+  .halo-hook-text { max-inline-size: 64ch; }
+  .halo-hook {
+    margin: 0;
+    font-family: var(--ify-font-display);
+    font-weight: var(--ify-weight-light);
+    font-size: var(--ify-display-sm);
+    line-height: 1.05;
+    letter-spacing: var(--ify-tracking-tight);
+    color: var(--ify-ink);
+    text-wrap: balance;
+  }
+  .halo-lede {
+    margin-block: var(--ify-space-4) 0;
+    font-family: var(--ify-font-text);
+    font-size: var(--ify-text-lg);
+    line-height: 1.5;
+    color: var(--ify-ink-muted);
+    text-wrap: pretty;
+  }
+  .halo-story { display: grid; gap: var(--ify-space-3); }
+  .halo-story p {
+    margin: 0;
+    font-family: var(--ify-font-text);
+    font-size: var(--ify-text-sm);
+    line-height: 1.5;
+    color: var(--ify-ink-muted);
+    text-wrap: pretty;
+  }
+  /* The three ways out of this card sit across its width, each with a mark of its own:
+     a component for the definition, a page for the manuscript, a wire for Wireify. The
+     marks are drawn here, in the page's own line work, not borrowed logos. */
+  .halo-story__links {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, auto));
+    justify-content: space-between;
+    gap: var(--ify-space-2) var(--ify-space-4);
+    padding-block-start: var(--ify-space-3);
+    border-top: 1px solid var(--ify-line);
+    font-family: var(--ify-font-label);
+    font-size: var(--ify-text-xs);
+  }
+  .halo-link { display: inline-flex; align-items: center; gap: var(--ify-space-2); }
+  /* The file's own mark, a black disc: on a dark ground it would vanish, so the monochrome
+     mark inverts with the theme rather than sitting in a box of its own. */
+  .halo-mark {
+    inline-size: 1.15rem;
+    block-size: 1.15rem;
+    flex: none;
+    object-fit: contain;
+    /* A solid disc beside two line-work glyphs reads as a blot: held back so the three
+       marks carry the same weight. */
+    opacity: 0.8;
+  }
+  [data-theme="dark"] .halo-mark { filter: invert(1); opacity: 1; }
+  @media (prefers-color-scheme: dark) {
+    [data-theme="auto"] .halo-mark { filter: invert(1); opacity: 1; }
+  }
+  .halo-glyph {
+    inline-size: 1.4rem;
+    block-size: 1rem;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  @media (max-width: 420px) { .halo-story__links { grid-template-columns: minmax(0, 1fr); } }
+  .halo-story a { color: var(--ify-accent-strong); text-decoration: none; }
+  .halo-story a:hover { text-decoration: underline; }
+
+  .halo-cols {
+    display: grid;
+    grid-template-columns: minmax(19rem, 24rem) minmax(0, 1fr);
+    gap: var(--ify-space-5) var(--ify-space-6);
+    align-items: start;
+  }
+  /* The rail sticks only while the model is on screen: it lives in a two-column grid
+     with the model and nothing else, so it releases at that grid's end instead of
+     riding over the sections below it. */
+  .halo-rail { position: sticky; top: 4.25rem; }
+  @media (max-width: 860px) {
+    .halo-cols { grid-template-columns: minmax(0, 1fr); }
+    .halo-rail { position: static; }
+  }
+  .halo-hero .ify-viewport__canvas { block-size: min(52vh, 32rem); }
+  .halo-rest { display: grid; gap: var(--ify-space-5); padding-block-start: var(--ify-space-5); }
+  /* A grid item's automatic minimum is its content, so anything that scrolls inside must
+     be told it may be narrower than what it holds. */
+  .halo-rest > *, .halo-cols > * { min-width: 0; }
+
+  .halo-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: var(--ify-app-gap) var(--ify-space-5);
+  }
+
+  /* Section and elevation: the section is near-square, the elevation runs long. */
+  .halo-figs {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.9fr);
+    gap: var(--ify-space-5);
+    align-items: start;
+    /* One height for both boxes at every width: their drawings have different aspects,
+       so a box sized by its own drawing left the pair a little out of step. */
+    --halo-fig-h: clamp(12rem, 23vw, 19rem);
+  }
+  @media (max-width: 860px) { .halo-figs { grid-template-columns: minmax(0, 1fr); } }
+  .halo-fig { margin: 0; }
+  .halo-fig figcaption {
+    font-family: var(--ify-font-label);
+    font-size: var(--ify-text-xs);
+    color: var(--ify-ink-subtle);
+    padding-block-end: var(--ify-space-2);
+  }
+  .halo-fig svg {
+    inline-size: 100%;
+    block-size: var(--halo-fig-h);
+    display: block;
+    border: 1px solid var(--ify-line);
+    background: var(--ify-surface);
+  }
+  /* Two hues carry the two jobs, in 3D and here. The families separate by line style:
+     struts heavy, a secondary strut hollow; cables thin, an X-cable dashed. The legend,
+     the table and the notes draw the very same line, so one look teaches all three. */
+  .m-ring   { stroke: var(--halo-cable); stroke-width: 1.2; }
+  .m-xcable { stroke: var(--halo-cable); stroke-width: 1.2; stroke-dasharray: 3.5 2.5; }
+  .m-diag   { stroke: var(--halo-strut); stroke-width: 3; }
+  .m-sec    { stroke: var(--halo-strut); stroke-width: 3; }
+  .m-sec-core { stroke: var(--ify-surface); stroke-width: 1.3; stroke-linecap: butt; }
+  .m-ring, .m-xcable, .m-sec, .m-diag, .m-sec-core { fill: none; }
+  .m-ring, .m-xcable, .m-sec, .m-diag { stroke-linecap: round; }
+  .m-clash { fill: var(--halo-clash); stroke: none; }
+  .annot {
+    fill: none;
+    stroke: var(--halo-annot);
+    stroke-width: 1;
+    stroke-dasharray: 1.5 3.5;
+  }
+  .halo-fig .rule { stroke: var(--ify-ink-subtle); stroke-width: 1; }
+  .halo-fig .rule-text {
+    font-family: var(--ify-font-label);
+    font-size: 9px;
+    fill: var(--ify-ink-subtle);
+  }
+
+  .halo-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ify-space-2) var(--ify-space-5);
+    padding-block-start: var(--ify-space-3);
+    font-family: var(--ify-font-label);
+    font-size: var(--ify-text-xs);
+    color: var(--ify-ink-subtle);
+  }
+  /* Under the drawings the legend carries the meaning too: a sample, the family, how many
+     of them, and one short line. The table below it keeps the numbers and the full width. */
+  .halo-legend--rows {
+    margin: 0;
+    padding: var(--ify-space-3) 0 0;
+    list-style: none;
+    display: grid;
+    /* Wide enough that a row stays a row: at three columns the family names broke across
+       lines and the lines ran under their own counts. */
+    /* The ideal row is 24rem, but a phone is narrower than that, and a track minimum
+       wider than its container is what pushes a page past the screen. */
+    grid-template-columns: repeat(auto-fit, minmax(min(24rem, 100%), 1fr));
+    gap: var(--ify-space-2) var(--ify-space-6);
+  }
+  .halo-legend--rows li { display: flex; align-items: baseline; gap: var(--ify-space-2); }
+  .halo-legend--rows + .ify-table__wrap { margin-block-start: var(--ify-space-6); }
+  .halo-legend--rows b, .halo-legend__count { white-space: nowrap; }
+  .halo-legend--rows b { font-weight: var(--ify-weight-medium); color: var(--ify-ink); }
+  .halo-legend--rows .halo-sample { align-self: center; }
+  .halo-legend__count { color: var(--ify-ink-subtle); }
+  .halo-legend span { display: inline-flex; align-items: center; gap: var(--ify-space-2); }
+  .halo-sample {
+    display: inline-block;
+    inline-size: 1.75rem;
+    block-size: 0.75rem;
+    flex: none;
+    vertical-align: middle;
+  }
+  .ify-table .halo-sample { margin-inline-end: var(--ify-space-2); }
+  /* Table beside the family notes; one column under 860px. */
+  .halo-family-cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(16rem, 1fr);
+    gap: var(--ify-space-4) var(--ify-space-7);
+    align-items: start;
+  }
+  @media (max-width: 860px) { .halo-family-cols { grid-template-columns: minmax(0, 1fr); } }
+  .halo-families {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--ify-space-3);
+    font-family: var(--ify-font-text);
+    font-size: var(--ify-text-sm);
+    line-height: 1.45;
+    color: var(--ify-ink-muted);
+  }
+  .halo-families .halo-sample { margin-inline-end: var(--ify-space-3); }
+  .halo-families b { font-weight: var(--ify-weight-medium); color: var(--ify-ink); }
+
+  /* Prose that teaches reads in the text face; the mono fine print is chrome - counts,
+     units, status. Keeping them apart is what stops the notes from merging into the
+     control help beside them. */
+  .halo-note {
+    margin: 0 0 var(--ify-space-3);
+    max-inline-size: 70ch;
+    font-family: var(--ify-font-text);
+    font-size: var(--ify-text-sm);
+    line-height: 1.5;
+    color: var(--ify-ink-muted);
+    text-wrap: pretty;
+  }
+  .halo-clear .halo-note { margin: 0; font-size: var(--ify-text-xs); }
+  .halo-note--wide { max-inline-size: none; }
+
+  /* The clearance check sits under the model, so a drag and its verdict share the screen. */
+  .halo-clear {
+    display: grid;
+    gap: var(--ify-space-2);
+    margin-block-start: var(--ify-space-3);
+    padding-block-start: var(--ify-space-3);
+    border-top: 1px solid var(--ify-line);
+  }
+  .halo-clear__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--ify-space-3) var(--ify-space-4); }
+  .halo-clear__title { font-family: var(--ify-font-label); font-size: var(--ify-text-xs); letter-spacing: var(--ify-tracking-wide); color: var(--ify-ink-muted); }
+  .halo-build__num { font-family: var(--ify-font-label); font-size: var(--ify-text-lg); color: var(--ify-ink); }
+  .halo-state--warn { color: var(--halo-clash); background: var(--halo-clash-soft); border-color: var(--halo-clash); }
+  .halo-state--ok { color: var(--halo-ok); background: var(--halo-ok-soft); border-color: var(--halo-ok); }
+  .halo-state--caution { color: var(--halo-caution); background: var(--halo-caution-soft); border-color: var(--halo-caution); }
+
+  /* A note about the drawings is not a legend row: it sits above them with a rule of its
+     own, so it never reads as another family. */
+  .halo-callout {
+    margin: var(--ify-space-3) 0 0;
+    padding: var(--ify-space-1) 0 var(--ify-space-1) var(--ify-space-3);
+    border-inline-start: 2px solid var(--halo-caution);
+    font-family: var(--ify-font-text);
+    font-size: var(--ify-text-sm);
+    color: var(--ify-ink);
+  }
+
+  /* The verdict you meet while walking, over the model itself. */
+  .halo-warn {
+    position: absolute;
+    inset-inline: 0;
+    bottom: var(--ify-space-5);
+    margin-inline: auto;
+    inline-size: max-content;
+    max-inline-size: min(30rem, 84%);
+    display: flex;
+    align-items: center;
+    gap: var(--ify-space-3);
+    padding: var(--ify-space-3) var(--ify-space-4);
+    border: 1px solid var(--halo-clash);
+    border-radius: var(--ify-radius-md);
+    background: color-mix(in oklab, var(--ify-surface) 90%, transparent);
+    font-family: var(--ify-font-text);
+    font-size: var(--ify-text-sm);
+    color: var(--ify-ink);
+    opacity: 0;
+    transition: opacity var(--ify-motion-dur) var(--ify-motion-ease-out);
+    pointer-events: none;
+  }
+  .halo-warn[data-on] { opacity: 1; }
+  .halo-warn--solid { border-color: var(--halo-caution); }
+  .halo-warn svg {
+    inline-size: 1.6rem;
+    block-size: 1.5rem;
+    flex: none;
+    fill: none;
+    stroke: var(--halo-clash);
+    stroke-width: 1.7;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .halo-warn--solid svg { stroke: var(--halo-caution); }
+  .halo-warn b {
+    display: block;
+    font-family: var(--ify-font-label);
+    font-size: var(--ify-text-xs);
+    letter-spacing: var(--ify-tracking-wide);
+  }
+  /* The walkthrough sits before the named views: it is a thing to start, not a view. */
+  .halo-head__actions { display: inline-flex; align-items: center; flex-wrap: wrap; gap: var(--ify-space-2) var(--ify-space-4); }
+  /* The one thing on this page to press, so it is filled in the struts' own colour and
+     reads as an action rather than another view name. The walking state stays quiet. */
+  .halo-walk {
+    border: 1px solid var(--halo-strut);
+    border-radius: var(--ify-radius-pill);
+    padding: 3px var(--ify-space-4);
+    background: var(--halo-strut);
+    color: var(--ify-surface);
+    font-weight: var(--ify-weight-medium);
+  }
+  .halo-walk:hover {
+    color: var(--ify-surface);
+    background: var(--halo-strut-mesh);
+    border-color: var(--halo-strut-mesh);
+  }
+  .halo-walk[disabled] { opacity: 0.55; cursor: default; }
+
+  /* About: three short blocks side by side; one column under 860px. */
+  .halo-about {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--ify-space-5) var(--ify-space-7);
+  }
+  @media (max-width: 860px) { .halo-about { grid-template-columns: minmax(0, 1fr); } }
+  .halo-about h3 {
+    margin: 0 0 var(--ify-space-2);
+    font-family: var(--ify-font-text);
+    font-weight: var(--ify-weight-medium);
+    font-size: var(--ify-text-base);
+    color: var(--ify-ink);
+  }
+  .halo-about p {
+    margin: 0 0 var(--ify-space-3);
+    font-family: var(--ify-font-text);
+    font-size: var(--ify-text-sm);
+    line-height: 1.55;
+    color: var(--ify-ink-muted);
+    text-wrap: pretty;
+  }
+  .halo-about p:last-child { margin-block-end: 0; }
+  .halo-about a { color: var(--ify-accent-strong); }
+  .halo-cite { font-family: var(--ify-font-label); font-size: var(--ify-text-xs); }
+
+</style>
+</head>
+<body class="ify-app">
+
+<header class="halo-head">
+  <span class="halo-brand">halo<span class="halo-brand__dot">.</span></span>
+  <div class="halo-head__right">
+    <button class="ify-toggle" type="button" data-ify-theme aria-label="Switch color theme">dark</button>
+  </div>
+</header>
+
+<main class="ify-app__main">
+  <section class="halo-hook-block">
+    <div class="halo-hook-text">
+      <h2 class="halo-hook">want to walk through a tensegrity rope?</h2>
+      <p class="halo-lede">HALO weaves rings of steel struts and cables into a hollow rope. the cables hold
+        the struts apart, and while the struts clear each other the middle stays open to walk down.</p>
+    </div>
+    <aside class="ify-card halo-story" aria-label="what this page is">
+      <p>HALO.gh is an early form study from the 2021 manuscript on tensegrity hollow ropes:
+        the geometry stage, before any forces are balanced. Wireify 0.3 turned it into this web app
+        and ported it to run in your browser, with nothing to install.</p>
+      <div class="halo-story__links">
+        <a class="halo-link" href="./HALO.gh" download>
+          <img class="halo-mark" src="./rhino.png" alt="" width="64" height="68"><span>HALO.gh</span>
+        </a>
+        <a class="halo-link" href="https://doi.org/10.1061/(ASCE)AE.1943-5568.0000487" target="_blank" rel="noopener noreferrer">
+          <svg class="halo-glyph" viewBox="0 0 22 16" aria-hidden="true">
+            <path d="M4.5 1.8h8l4.5 4.2v8.2h-12.5z"/>
+            <path d="M12.5 1.8v4.2h4.5M7.5 8.5h6M7.5 11.3h4"/>
+          </svg><span>the manuscript</span>
+        </a>
+        <a class="halo-link" href="https://www.food4rhino.com/en/app/wireify" target="_blank" rel="noopener noreferrer">
+          <svg class="halo-glyph" viewBox="0 0 22 16" aria-hidden="true">
+            <circle cx="3" cy="8" r="2.2" fill="currentColor" stroke="none"/>
+            <path d="M5.4 8c3.6 0 4.6-4.4 8-4.4 2.2 0 3.4 1.6 3.4 3.2 0 2.2-2 4.8-5.4 4.8"/>
+          </svg><span>Wireify</span>
+        </a>
+      </div>
+    </aside>
+  </section>
+
+  <div class="halo-cols">
+
+    <section class="ify-section halo-rail">
+      <h2 class="ify-section__title">shape it</h2>
+      <div class="ify-controls" data-ify-controls></div>
+    </section>
+
+    <section class="ify-section halo-hero" id="model">
+      <h2 class="ify-section__title">the rope</h2>
+      <div class="ify-viewport">
+        <div class="ify-viewport__head">
+          <span class="ify-viewport__label" id="hero-label">3D model</span>
+          <span class="halo-head__actions">
+            <button type="button" class="ify-viewport__action halo-walk" id="walk">activate walkthrough</button>
+            <span class="ify-viewport__views" id="hero-views"></span>
+          </span>
+        </div>
+        <div class="ify-viewport__canvas" id="hero-canvas"></div>
+        <p class="ify-fine" id="hero-status"></p>
+      </div>
+      <div class="halo-legend">
+        <span><svg class="halo-sample" viewBox="0 0 28 12" aria-hidden="true"><line class="m-diag" x1="1" y1="6" x2="27" y2="6"/></svg>struts</span>
+        <span><svg class="halo-sample" viewBox="0 0 28 12" aria-hidden="true"><line class="m-ring" x1="1" y1="6" x2="27" y2="6"/></svg>cables</span>
+        <span><svg class="halo-sample" viewBox="0 0 28 12" aria-hidden="true"><circle class="m-clash" cx="14" cy="6" r="4"/></svg>struts cutting into each other</span>
+      </div>
+      <div class="halo-clear">
+        <div class="halo-clear__head">
+          <span class="halo-clear__title">do the struts clear each other?</span>
+          <span class="ify-badge" id="build-state">checking</span>
+          <span class="halo-build__num" id="build-num"></span>
+        </div>
+        <p class="halo-note" id="build-note"></p>
+      </div>
+    </section>
+  </div>
+
+  <div class="halo-rest">
+
+    <section class="ify-section" id="figures">
+      <h2 class="ify-section__title">key figures</h2>
+      <div class="halo-kpis" id="kpis"></div>
+    </section>
+
+    <section class="ify-section" id="members">
+      <h2 class="ify-section__title">the members</h2>
+      <p class="halo-note halo-note--wide">the manuscript builds a module in three steps: diagonal struts with secondary cables, then X-cables, then secondary struts.</p>
+      <div class="halo-figs">
+        <figure class="halo-fig">
+          <figcaption>section, looking along the rope.</figcaption>
+          <svg id="svg-section" role="img" aria-label="Section through the rope, looking along its axis"></svg>
+        </figure>
+        <figure class="halo-fig">
+          <figcaption>elevation, from the side. the rope runs left to right.</figcaption>
+          <svg id="svg-elev" role="img" aria-label="Elevation of the rope from the side"></svg>
+        </figure>
+      </div>
+      <p class="halo-callout" id="figs-note" hidden></p>
+      <ul class="halo-legend halo-legend--rows" id="legend"></ul>
+      <div class="ify-table__wrap">
+        <table class="ify-table ify-table--stack" id="anatomy"></table>
+      </div>
+    </section>
+
+    <section class="ify-section" id="about">
+      <h2 class="ify-section__title">about</h2>
+      <div class="halo-about">
+        <div>
+          <h3>what a tensegrity hollow rope is</h3>
+          <p>A tensegrity structure holds its shape with struts that carry only compression and cables
+            that carry only tension. In a hollow rope the struts never meet at a joint of their own: each one ends where
+            the next begins, so compression runs along the structure inside a net of cables and the
+            middle stays clear.</p>
+          <p>HALO generates that geometry, then form-finds it: a second step that balances the forces,
+            by a modified force density method. This page is the generation half, in metres;
+            <a href="https://doi.org/10.1061/(ASCE)AE.1943-5568.0000487" target="_blank" rel="noopener noreferrer">the manuscript</a>
+            has the rest.</p>
+        </div>
+        <div>
+          <h3>how this page was made</h3>
+          <p>HALO.gh is the manuscript's own definition, by this page's author. Wireify 0.3 connected
+            Claude to it inside Grasshopper: it read the live canvas, rewrote the wired chain as one
+            Python component that runs in stock Rhino 8, and built this page as the definition's
+            companion app. Taking the page away from Rhino meant rewriting that component's geometry
+            in JavaScript, which is what solves as you drag.</p>
+          <p>The port was checked against the live definition at nine states with no mismatches;
+            <a href="./PARITY.md" target="_blank" rel="noopener noreferrer">the raw report</a> has the detail.</p>
+        </div>
+        <div>
+          <h3>reference</h3>
+          <p><a href="./HALO.gh" download>HALO.gh</a> here is the definition after that conversion: the
+            wired chain is now an ordinary Python 3 script component, so the file opens in Rhino 8 with
+            nothing installed and carries no dependency on Wireify.</p>
+          <p class="halo-cite">Zargar, S. H., and Alaghmandan, M. (2021). "HALO: Interactive Equilibrium Approach in
+            Designing Tensegrity Hollow-Rope Structures." Journal of Architectural Engineering, 27(3),
+            04021026. <a href="https://doi.org/10.1061/(ASCE)AE.1943-5568.0000487" target="_blank" rel="noopener noreferrer">doi:10.1061/(ASCE)AE.1943-5568.0000487</a></p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="halo-foot">
+  <div class="halo-foot__inner">
+    <div class="halo-foot__top">
+      <div class="halo-foot__brand">
+        <span class="halo-wordmark" aria-label=".ify"><span class="halo-wordmark__dot" aria-hidden="true">.</span><span aria-hidden="true">ify</span></span>
+        <p class="halo-foot__desc">an .ify showcase: HALO.gh made into a web app by Wireify 0.3.</p>
+      </div>
+      <div class="halo-foot__bank">
+        <div class="halo-foot__row">
+          <svg width="100" height="28" viewBox="0 0 100 28" aria-hidden="true"><path class="halo-foot__wire" d="M 6 13 C 32 13, 64 22, 94 16"/><circle class="halo-foot__socket" cx="6" cy="13" r="4.5"/></svg>
+          <a class="halo-foot__link" href="https://doi.org/10.1061/(ASCE)AE.1943-5568.0000487" target="_blank" rel="noopener noreferrer">the manuscript <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+        <div class="halo-foot__row">
+          <svg width="100" height="28" viewBox="0 0 100 28" aria-hidden="true"><path class="halo-foot__wire" d="M 6 13 C 32 13, 64 22, 94 16"/><circle class="halo-foot__socket" cx="6" cy="13" r="4.5"/></svg>
+          <a class="halo-foot__link" href="./HALO.gh" download>HALO.gh <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+        <div class="halo-foot__row">
+          <svg width="100" height="28" viewBox="0 0 100 28" aria-hidden="true"><path class="halo-foot__wire" d="M 6 13 C 32 13, 64 22, 94 16"/><circle class="halo-foot__socket" cx="6" cy="13" r="4.5"/></svg>
+          <a class="halo-foot__link" href="https://www.food4rhino.com/en/app/wireify" target="_blank" rel="noopener noreferrer">wireify on food4rhino <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+        <div class="halo-foot__row">
+          <svg width="100" height="28" viewBox="0 0 100 28" aria-hidden="true"><path class="halo-foot__wire" d="M 6 13 C 32 13, 64 22, 94 16"/><circle class="halo-foot__socket" cx="6" cy="13" r="4.5"/></svg>
+          <a class="halo-foot__link" href="https://ifylab.dev" target="_blank" rel="noopener noreferrer">ifylab.dev <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="halo-foot__base"><span class="halo-foot__copy">© 2026 Hossein Zargar · HALO · Apache-2.0</span></div>
+  </div>
+</footer>
+
+<script type="module">
+  import { mount, theme, fmt } from './kit/ify-app.js';
+  import { local, bindViewport } from './shim.js';
+
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const UNIT = 'm';
+  const app = local({ homeId: 'halo-standalone' });
+  // mount drives the status pill and the six control widgets (labels and help from the
+  // manifest, gesture brackets, refused-push marks, missing kinds). Everything below
+  // renders the page's own sections from the same frames.
+  mount(app, document);
+  theme.bindToggle(document.querySelector('[data-ify-theme]'));
+
+  const el = (id) => document.getElementById(id);
+  const viewOf = (s, param) => (s.views || []).find((v) => v.param === param);
+  const rowsOf = (s, param) => {
+    const v = viewOf(s, param);
+    return v ? (v.samples || []).map((x) => x.value) : [];
+  };
+  const numOf = (s, param) => {
+    const v = viewOf(s, param);
+    const first = v && (v.samples || [])[0];
+    if (!first) return null;
+    const n = Number(first.value);
+    return Number.isFinite(n) ? n : null;
+  };
+  // Trailing zeros go only after a decimal point: a bare 90 must stay 90.
+  const round = (n, d) => {
+    const s = fmt.num(n, d);
+    return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s;
+  };
+  const metres = (n, d) => round(n, d) + ' ' + UNIT;
+
+  // One drawing convention for the whole page: a legend chip, a table cell and the
+  // drawings all draw the same line, so a family is read by its style, not by a hue.
+  const SAMPLE = {
+    diag: ['m-diag'],
+    sec: ['m-sec', 'm-sec-core'],
+    ring: ['m-ring'],
+    xcable: ['m-xcable'],
+    walkway: ['annot'],
+  };
+  function sample(kind) {
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('class', 'halo-sample');
+    svg.setAttribute('viewBox', '0 0 28 12');
+    svg.setAttribute('aria-hidden', 'true');
+    for (const cls of SAMPLE[kind] || []) {
+      const line = document.createElementNS(SVG_NS, 'line');
+      line.setAttribute('class', cls);
+      line.setAttribute('x1', '1');
+      line.setAttribute('y1', '6');
+      line.setAttribute('x2', '27');
+      line.setAttribute('y2', '6');
+      svg.append(line);
+    }
+    return svg;
+  }
+
+  // --- the manifest: labels and help for the controls, the geometry view for the model ---
+  const heroStatus = el('hero-status');
+  fetch('./manifest.json').then((r) => r.json()).then((manifest) => {
+    const text = {};
+    for (const c of manifest.controls || []) text[c.id] = { label: c.label, help: c.help };
+    app.setControlText(text);
+    const geo = (manifest.views || []).find((v) => v.geometry);
+    if (!geo) {
+      heroStatus.className = 'ify-empty';
+      heroStatus.textContent = 'the 3D view could not start. reload the page.';
+      return;
+    }
+    const bound = bindViewport(app, geo.id, el('hero-canvas'),
+      { param: geo.param, statusEl: heroStatus, viewsEl: el('hero-views'), intro: false, hint: false });
+    wireWalkthrough(bound.viewport);
+  }).catch(() => { heroStatus.textContent = 'the page could not read its own settings. reload the page.'; });
+
+  // --- is this rope walkable? -----------------------------------------------
+  // Two ways it is not: struts that cut into each other, and a middle that has closed up.
+  // Both are honest outcomes of the six numbers, and both are worth meeting head on.
+  function walkability(s) {
+    if (!s) return { ok: true };
+    if (numOf(s, 'collisions')) {
+      return { ok: false, kind: 'clash', line: 'the struts cut into each other, so this rope cannot be built as drawn.' };
+    }
+    if (!((numOf(s, 'inner_opening') || 0) > 0)) {
+      return { ok: false, kind: 'solid', line: 'the middle closes up at these settings, so there is nothing to walk down.' };
+    }
+    return { ok: true };
+  }
+
+  let warnEl = null;
+  function walkSign() {
+    if (warnEl) return warnEl;
+    warnEl = document.createElement('div');
+    warnEl.className = 'halo-warn';
+    warnEl.hidden = true;
+    warnEl.innerHTML = '<svg viewBox="0 0 24 22" aria-hidden="true">'
+      + '<path d="M12 2.4 22.6 20.2H1.4z"/><path d="M12 8.6v5.2M12 16.8v.5"/></svg>'
+      + '<span><b>not walkable</b><span class="halo-warn__line"></span></span>';
+    el('hero-canvas').append(warnEl);
+    return warnEl;
+  }
+
+  function showSign(verdict) {
+    const sign = walkSign();
+    sign.classList.toggle('halo-warn--solid', verdict.kind === 'solid');
+    sign.querySelector('.halo-warn__line').textContent = verdict.line;
+    sign.hidden = false;
+    requestAnimationFrame(() => sign.setAttribute('data-on', ''));
+  }
+
+  function hideSign() {
+    if (!warnEl) return;
+    warnEl.removeAttribute('data-on');
+    setTimeout(() => { if (warnEl && !warnEl.hasAttribute('data-on')) warnEl.hidden = true; }, 300);
+  }
+
+  // --- the walkthrough ------------------------------------------------------
+  // Wherever the camera is, drop to the rope's end, walk up the middle until a third of
+  // it is left, then ease back to the fitted 3D view. The kit carries the camera; the
+  // path is the page's, because only the page knows the rope runs along x.
+  function walkLegs(vp) {
+    const b = vp.bounds();
+    if (!b) return null;
+    const len = Math.max(b[3] - b[0], 1e-6);
+    const across = Math.max(b[4] - b[1], b[5] - b[2], 1e-6);
+    const yc = (b[1] + b[4]) / 2;
+    const zc = (b[2] + b[5]) / 2;
+    // Enter by whichever end the camera is already nearer. Entering always from the same
+    // end sent the camera the length of the rope and back before the walk began.
+    const here = vp.pose().position;
+    const fromStart = here[0] <= (b[0] + b[3]) / 2;
+    const entry = fromStart ? b[0] : b[3];
+    const exit = fromStart ? b[3] : b[0];
+    const inward = fromStart ? 1 : -1;
+    // The approach is timed by the distance it covers: from the side view the camera is
+    // already at that end, and a fixed second there read as the button doing nothing.
+    const approach = [entry - inward * across * 1.4, yc, zc];
+    const travel = Math.hypot(approach[0] - here[0], approach[1] - here[1], approach[2] - here[2]);
+    const approachMs = Math.max(200, Math.min(1000, Math.round((travel / (across * 2)) * 1000)));
+    const legs = [
+      { position: approach, target: [exit, yc, zc], ms: approachMs },
+      // The walk starts at speed: from the side view the approach is already done, and a
+      // leg that eases in there felt like the button had not registered.
+      { position: [entry + inward * len * 0.66, yc, zc], target: [exit + inward * len * 0.25, yc, zc],
+        ms: 5200, ease: 'out' },
+    ];
+    // The last leg is the 3D view's own framing, asked of the kit, so the path ENDS on the
+    // view instead of near it: an approximated last frame jumped when the view took over.
+    const home = vp.poseFor('iso');
+    if (home) legs.push({ position: home.position, target: home.target, ms: 1600 });
+    return legs;
+  }
+
+  async function runWalkthrough(vp, btn) {
+    const legs = walkLegs(vp);
+    if (!legs) return;
+    const label = btn ? btn.textContent : null;
+    if (btn) { btn.disabled = true; btn.textContent = 'walking'; }
+    const verdict = walkability(lastState);
+    if (!verdict.ok) showSign(verdict);
+    const how = await vp.fly(legs);
+    hideSign();
+    // A named view, the fit button or a grab during the walk is the user taking over:
+    // leave them where they asked to be.
+    if (how === 'done' || how === 'reduced') vp.lookFrom('iso');
+    if (btn) { btn.disabled = false; btn.textContent = label; }
+  }
+
+  function wireWalkthrough(vp) {
+    const btn = el('walk');
+    if (btn) btn.addEventListener('click', () => runWalkthrough(vp, btn));
+    // The walk is the page's opening move: it plays itself once, as soon as there is a
+    // model to walk through.
+    const kick = () => {
+      if (vp.bounds()) runWalkthrough(vp, btn);
+      else requestAnimationFrame(kick);
+    };
+    requestAnimationFrame(kick);
+  }
+
+  // --- key figures ---------------------------------------------------------
+  function readout(label, value) {
+    const div = document.createElement('div');
+    div.className = 'ify-readout';
+    const l = document.createElement('span');
+    l.className = 'ify-readout__label';
+    l.textContent = label;
+    const v = document.createElement('span');
+    v.className = 'ify-readout__value';
+    v.textContent = value;
+    div.append(l, v);
+    return div;
+  }
+
+  function renderKpis(s) {
+    const box = el('kpis');
+    const joints = numOf(s, 'node_count');
+    const members = numOf(s, 'member_count');
+    const total = numOf(s, 'total_length');
+    const length = numOf(s, 'overall_length');
+    const opening = numOf(s, 'inner_opening');
+    if (joints === null) {
+      const p = document.createElement('p');
+      p.className = 'ify-empty';
+      p.textContent = 'solving the first rope.';
+      box.replaceChildren(p);
+      return;
+    }
+    // The unit rides the label, so no line of fine print has to carry it.
+    box.replaceChildren(
+      readout('joints', round(joints, 0)),
+      readout('members', round(members, 0)),
+      readout('total member length (m)', round(total, 1)),
+      readout('rope length (m)', round(length, 2)),
+      readout('walkway diameter (m)', opening > 0 ? round(2 * opening, 2) : 'none'));
+  }
+
+  // --- do the struts clear each other? --------------------------------------
+  function renderBuild(s) {
+    const clear = numOf(s, 'min_clearance');
+    const hits = numOf(s, 'collisions');
+    const strut = (s.controls || []).find((c) => c.nickName === 'strut_radius');
+    const limit = strut && typeof strut.value === 'number' ? strut.value * 2 : null;
+    const state = el('build-state');
+    const num = el('build-num');
+    const note = el('build-note');
+    state.classList.remove('halo-state--warn', 'halo-state--ok', 'halo-state--caution');
+
+    if (clear === null) {
+      state.textContent = 'checking';
+      num.textContent = '';
+      note.textContent = 'the clearance has not been measured yet.';
+      return;
+    }
+    if (clear < 0) {
+      state.textContent = 'not applicable';
+      num.textContent = '';
+      note.textContent = 'fewer than two struts that share no joint, so nothing can overlap.';
+      return;
+    }
+    num.textContent = 'centre to centre ' + metres(clear, 2)
+      + (limit !== null ? ', ' + metres(limit, 2) + ' needed' : '');
+    const opening = numOf(s, 'inner_opening') || 0;
+    if (!hits && opening <= 0) {
+      state.textContent = 'no walkway';
+      state.classList.add('halo-state--caution');
+      note.textContent = 'nothing overlaps, but the middle closes up at these settings:'
+        + ' solid through, with nothing to walk down.';
+      return;
+    }
+    if (hits) {
+      state.textContent = 'struts overlap';
+      state.classList.add('halo-state--warn');
+      note.textContent = fmt.count(hits) + (hits === 1 ? ' pair' : ' pairs')
+        + ' cut into each other, at the red spheres. a thinner strut or another mid-ring scale opens them up.';
+    } else {
+      state.textContent = 'clear';
+      state.classList.add('halo-state--ok');
+      note.textContent = 'no two struts cut into each other. a geometric check only: no loads, no forces.';
+    }
+  }
+
+  // --- section and elevation ----------------------------------------------
+  // Painted heaviest first. In section a diagonal strut projects exactly onto a ring
+  // edge, so cables must go on top or the tension net vanishes under the struts.
+  const FAMILY_ORDER = ['diag', 'sec', 'xcable', 'ring'];
+
+  function parseMembers(rows) {
+    const out = [];
+    for (const row of rows) {
+      const p = String(row).split(',');
+      if (p.length < 7) continue;
+      const n = p.slice(1, 7).map(Number);
+      if (n.some((x) => !Number.isFinite(x))) continue;
+      out.push({ fam: p[0], a: [n[0], n[1], n[2]], b: [n[3], n[4], n[5]] });
+    }
+    return out;
+  }
+
+  function niceStep(raw) {
+    const pow = Math.pow(10, Math.floor(Math.log10(raw)));
+    const f = raw / pow;
+    return (f >= 5 ? 5 : f >= 2 ? 2 : 1) * pow;
+  }
+
+  // project: (point) -> [u, v], v drawn upward. circleRadius: model radius to ring, or 0.
+  function drawFigure(svg, segs, project, circleRadius) {
+    // Both boxes take one height from CSS, and the viewBox follows the box's own pixels,
+    // so each drawing fills its box instead of letterboxing inside a fixed ratio.
+    const box = svg.getBoundingClientRect();
+    const W = Math.max(1, Math.round(box.width));
+    const H = Math.max(1, Math.round(box.height));
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    const pad = 18, padBottom = 30;
+    if (!segs.length) { svg.replaceChildren(); return; }
+
+    const us = [], vs = [];
+    for (const s of segs) {
+      const a = project(s.a), b = project(s.b);
+      us.push(a[0], b[0]);
+      vs.push(a[1], b[1]);
+    }
+    if (circleRadius > 0) { us.push(-circleRadius, circleRadius); vs.push(-circleRadius, circleRadius); }
+    const minU = Math.min(...us), maxU = Math.max(...us);
+    const minV = Math.min(...vs), maxV = Math.max(...vs);
+    const spanU = Math.max(maxU - minU, 1e-9), spanV = Math.max(maxV - minV, 1e-9);
+    const innerW = W - 2 * pad, innerH = H - pad - padBottom;
+    const sc = Math.min(innerW / spanU, innerH / spanV);
+    const ox = pad + (innerW - spanU * sc) / 2 - minU * sc;
+    const oy = H - padBottom - (innerH - spanV * sc) / 2 + minV * sc;
+    const X = (u) => ox + u * sc;
+    const Y = (v) => oy - v * sc;
+
+    const frag = document.createDocumentFragment();
+    if (circleRadius > 0) {
+      const c = document.createElementNS(SVG_NS, 'circle');
+      c.setAttribute('class', 'annot');
+      c.setAttribute('cx', X(0).toFixed(2));
+      c.setAttribute('cy', Y(0).toFixed(2));
+      c.setAttribute('r', (circleRadius * sc).toFixed(2));
+      frag.append(c);
+    }
+    const drawSeg = (seg, cls) => {
+      const a = project(seg.a), b = project(seg.b);
+      const line = document.createElementNS(SVG_NS, 'line');
+      line.setAttribute('class', cls);
+      line.setAttribute('x1', X(a[0]).toFixed(2));
+      line.setAttribute('y1', Y(a[1]).toFixed(2));
+      line.setAttribute('x2', X(b[0]).toFixed(2));
+      line.setAttribute('y2', Y(b[1]).toFixed(2));
+      frag.append(line);
+    };
+    for (const fam of FAMILY_ORDER) {
+      for (const seg of segs) if (seg.fam === fam) drawSeg(seg, 'm-' + fam);
+      // A secondary strut draws hollow - the same line with a surface-coloured core - so
+      // the two strut families separate without a third colour.
+      if (fam === 'sec') for (const seg of segs) if (seg.fam === 'sec') drawSeg(seg, 'm-sec-core');
+    }
+    // Scale bar: a real model length, so the drawing can be read off.
+    const step = niceStep((innerW * 0.28) / sc);
+    const barPx = step * sc;
+    const x0 = pad, y0 = H - 14;
+    const bar = document.createElementNS(SVG_NS, 'path');
+    bar.setAttribute('class', 'rule');
+    bar.setAttribute('d', `M${x0} ${y0 - 4} V${y0} H${(x0 + barPx).toFixed(2)} V${y0 - 4}`);
+    bar.setAttribute('fill', 'none');
+    const label = document.createElementNS(SVG_NS, 'text');
+    label.setAttribute('class', 'rule-text');
+    label.setAttribute('x', (x0 + barPx + 6).toFixed(2));
+    label.setAttribute('y', y0 + 1);
+    label.textContent = metres(step, 3);
+    frag.append(bar, label);
+    svg.replaceChildren(frag);
+  }
+
+  function renderFigures(s) {
+    const view = viewOf(s, 'members');
+    const segs = parseMembers(rowsOf(s, 'members'));
+    const opening = numOf(s, 'inner_opening') || 0;
+    drawFigure(el('svg-section'), segs, (p) => [p[1], p[2]], opening);
+    drawFigure(el('svg-elev'), segs, (p) => [p[0], p[2]], 0);
+
+    // A count the model's own foot already carries was one more piece of loose prose:
+    // this line speaks only when something is actually missing.
+    const note = el('figs-note');
+    if (!view) {
+      note.textContent = 'the drawings have nothing to draw yet.';
+    } else if (view.samplesTruncated) {
+      note.textContent = 'showing ' + fmt.count(segs.length) + ' of ' + fmt.count(view.tree.dataCount)
+        + ' members: whole modules from the start of the rope.';
+    } else if (opening <= 0) {
+      note.textContent = 'no walkway at these settings: the members reach the axis.';
+    } else {
+      note.textContent = '';
+    }
+    note.hidden = !note.textContent;
+  }
+
+  // --- families: legend and table ------------------------------------------
+  const ROLE = { compression: 'compression', tension: 'tension' };
+  const COLUMNS = ['family', 'compression or tension', 'how many', 'length each (m)', 'family total (m)'];
+  // One short line per family, said where the drawings are read.
+  const SAYS = {
+    ring: "trace each ring's outline",
+    diag: 'run ring to ring along the rope',
+    sec: 'join a ring to its middle ring',
+    xcable: 'brace the middle ring to both sides',
+  };
+
+  function parseFamilies(rows) {
+    return rows.map((row) => {
+      const p = String(row).split('|');
+      return { key: p[0], label: p[1], role: p[2], count: Number(p[3]),
+               min: Number(p[4]), max: Number(p[5]), total: Number(p[6]) };
+    }).filter((f) => f.key);
+  }
+
+  function renderFamilies(s) {
+    const fams = parseFamilies(rowsOf(s, 'families'));
+    const legend = el('legend');
+    const table = el('anatomy');
+    if (!fams.length) {
+      legend.replaceChildren();
+      const p = document.createElement('caption');
+      p.className = 'ify-empty';
+      p.textContent = 'the member families are not counted yet.';
+      table.replaceChildren(p);
+      return;
+    }
+
+    legend.replaceChildren(...fams.map((f) => {
+      const li = document.createElement('li');
+      const name = document.createElement('b');
+      name.textContent = f.label;
+      const says = document.createElement('span');
+      says.textContent = SAYS[f.key] || '';
+      li.append(sample(f.key), name, says);
+      return li;
+    }));
+    // The walkway is an annotation, not a member: it joins the legend only when there is
+    // one to see, and never takes a member's hue.
+    if ((numOf(s, 'inner_opening') || 0) > 0) {
+      const li = document.createElement('li');
+      const name = document.createElement('b');
+      name.textContent = 'clear walkway';
+      const says = document.createElement('span');
+      says.textContent = 'the widest circle through the middle';
+      li.append(sample('walkway'), name, says);
+      legend.append(li);
+    }
+
+    const head = document.createElement('thead');
+    const hr = document.createElement('tr');
+    for (const h of COLUMNS) {
+      const th = document.createElement('th');
+      th.textContent = h;
+      hr.append(th);
+    }
+    head.append(hr);
+    const body = document.createElement('tbody');
+    for (const f of fams) {
+      const tr = document.createElement('tr');
+      const name = document.createElement('td');
+      name.append(sample(f.key), document.createTextNode(f.label));
+      const role = document.createElement('td');
+      role.textContent = ROLE[f.role] || f.role;
+      const count = document.createElement('td');
+      count.textContent = fmt.count(f.count);
+      const len = document.createElement('td');
+      // One decimal across the table: three said more than the geometry stage can mean.
+      len.textContent = f.count === 0 ? '—'
+        : (Math.abs(f.max - f.min) < 1e-4 ? round(f.min, 1)
+           : round(f.min, 1) + ' to ' + round(f.max, 1));
+      const total = document.createElement('td');
+      total.textContent = f.count === 0 ? '—' : round(f.total, 1);
+      // Each cell carries its own column name, so a phone can drop the header row and
+      // stack every family as its own block instead of scrolling the table sideways.
+      const cells = [name, role, count, len, total];
+      cells.forEach((td, i) => { td.dataset.label = COLUMNS[i]; });
+      tr.append(...cells);
+      body.append(tr);
+    }
+    table.replaceChildren(head, body);
+  }
+
+  let lastState = null;
+  app.onState((s) => {
+    lastState = s;
+    renderKpis(s);
+    renderBuild(s);
+    renderFigures(s);
+    renderFamilies(s);
+  });
+
+  // The drawings measure their own box, so a resize has to redraw them.
+  let redrawTimer = 0;
+  addEventListener('resize', () => {
+    clearTimeout(redrawTimer);
+    redrawTimer = setTimeout(() => { if (lastState) renderFigures(lastState); }, 150);
+  });
+
+  // --- standalone embed contract -------------------------------------------
+  (() => {
+    const ALLOWED = ['https://ifylab.dev', 'http://localhost:4321'];
+    // Cloudflare branch previews of the site host this page under their own origin.
+    const PREVIEW = /^https:\/\/[a-z0-9-]+\.hub-c0a\.pages\.dev$/;
+    if (new URLSearchParams(location.search).get('embed') === '1') {
+      document.documentElement.setAttribute('data-embed', '1');
+      for (const sel of ['[data-ify-theme]', 'footer', '.ify-footer']) {
+        for (const n of document.querySelectorAll(sel)) n.hidden = true;
+      }
+    }
+    addEventListener('message', (e) => {
+      if (!ALLOWED.includes(e.origin) && !PREVIEW.test(e.origin)) return;
+      const d = e.data;
+      if (!d || d.type !== 'ify:theme') return;
+      if (d.mode !== 'dark' && d.mode !== 'light') return;
+      // the kit's theme helper only exposes bindToggle, so set the attribute the
+      // tokens read, exactly as bindToggle does.
+      document.documentElement.setAttribute('data-theme', d.mode);
+      try { localStorage.setItem('ify-theme', d.mode); } catch { /* private mode */ }
+    });
+  })();
+</script>
+
+</body>
+</html>

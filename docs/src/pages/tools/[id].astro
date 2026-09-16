@@ -28,11 +28,29 @@ const app = detail?.app
     {lede ? <p class="lede">{lede}</p> : tool.description ? <p class="lede">{tool.description}</p> : null}
 
     {
+      detail?.cta?.length ? (
+        <div class="actions actions-top">
+          {detail.cta.map((c, i) =>
+            c.href.startsWith('/') ? (
+              <a class={i === 0 ? 'cta' : 'cta secondary'} href={c.href}>
+                {c.label} <span aria-hidden="true">{'→'}</span>
+              </a>
+            ) : (
+              <a class={i === 0 ? 'cta' : 'cta secondary'} href={c.href} target="_blank" rel="noopener noreferrer">
+                {c.label} <span aria-hidden="true">{'→'}</span>
+              </a>
+            ),
+          )}
+        </div>
+      ) : null
+    }
+
+    {
       app ? (
         <section class="app">
           <div class="app-head">
             <span class="app-label">try it</span>
-            <a class="app-full" href={app.src} target="_blank" rel="noopener noreferrer">
+            <a class="app-full" href={app.full ?? app.src} target="_blank" rel="noopener noreferrer">
               open full screen <span aria-hidden="true">{'→'}</span>
             </a>
           </div>
@@ -73,16 +91,24 @@ const app = detail?.app
     }
 
     {
-      detail?.repo ? (
+      detail && (detail.repo || detail.links?.length) ? (
         <div class="actions">
-          <a class="cta" href={detail.repo} target="_blank" rel="noopener noreferrer">
-            View on GitHub <span aria-hidden="true">{'→'}</span>
-          </a>
-          {detail.links?.map((l) => (
-            <a class="cta secondary" href={l.href} target="_blank" rel="noopener noreferrer">
-              {l.label} <span aria-hidden="true">{'→'}</span>
+          {detail.repo ? (
+            <a class="cta" href={detail.repo} target="_blank" rel="noopener noreferrer">
+              View on GitHub <span aria-hidden="true">{'→'}</span>
             </a>
-          ))}
+          ) : null}
+          {detail.links?.map((l) =>
+            l.download ? (
+              <a class="cta secondary" href={l.href} download>
+                {l.label} <span aria-hidden="true">{'↓'}</span>
+              </a>
+            ) : (
+              <a class="cta secondary" href={l.href} target="_blank" rel="noopener noreferrer">
+                {l.label} <span aria-hidden="true">{'→'}</span>
+              </a>
+            ),
+          )}
           {detail.license ? <span class="license">{detail.license}</span> : null}
         </div>
       ) : null
@@ -210,6 +236,9 @@ const app = detail?.app
     gap: var(--ify-space-5);
     margin-top: var(--ify-space-7);
   }
+  .actions-top {
+    margin-top: var(--ify-space-6);
+  }
   .cta {
     display: inline-flex;
     align-items: center;
@@ -299,8 +328,10 @@ const app = detail?.app
     if (!frame || !base) return
     const mode = () => (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light')
     frame.src = `${base}/?embed=1&theme=${mode()}`
+    // postMessage needs an absolute origin: a same-site app declares a relative src.
+    const target = new URL(base, location.href).origin
     appThemeObserver = new MutationObserver(() => {
-      frame.contentWindow?.postMessage({ type: 'ify:theme', mode: mode() }, base)
+      frame.contentWindow?.postMessage({ type: 'ify:theme', mode: mode() }, target)
     })
     appThemeObserver.observe(document.documentElement, {
       attributes: true,

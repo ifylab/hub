@@ -1,0 +1,77 @@
+/* Your app's re-theme file - loaded after the kit CSS, so any --ify-* token
+   redefined here wins. Edit freely; Wireify never touches this file. Kit
+   files under kit/ are refreshed on Connect - re-theme here, never there. */
+
+/* HALO re-theme.
+
+   The manuscript's figures teach the module in two hues: compression teal, tension
+   gold. The kit's own accent is already that teal and its warm is already that
+   gold, so the members ride the kit palette rather than inventing one. TWO hues
+   carry the two jobs everywhere, in 3D and on the drawings; the four families
+   separate by line style on the drawings - weight, a hollow core, a dash - which
+   survives greyscale and colour-vision deficiency, where four hues did not.
+
+   The 3D viewport reads four tokens: meshes are the piped struts, curves and
+   crease edges are the cables. Setting mesh and edge separately is what gives
+   the hero view its compression/tension split. */
+
+:root {
+  --halo-strut: oklch(43% 0.060 196);
+  --halo-cable: oklch(52% 0.120 66);
+  /* The 3D view is shaded solid where the drawings are line work, so the struts take
+     their own shade there: lighter in light mode, deeper in dark, since a lit solid
+     reads heavier than a line at the same value. */
+  --halo-strut-mesh: oklch(60% 0.052 196);
+  /* The family names stay as the drawing's handles; both strut families take the
+     strut hue, both cable families the cable hue. */
+  --halo-diag: var(--halo-strut);
+  --halo-sec: var(--halo-strut);
+  --halo-ring: var(--halo-cable);
+  --halo-xcable: var(--halo-cable);
+  /* The walkway annotation is not a member: neutral ink, never a third hue. */
+  --halo-annot: var(--ify-ink-subtle);
+  /* struts that pass within two radii of another: the manuscript's Collision message */
+  --halo-clash: oklch(62% 0.170 25);
+  --halo-clash-soft: oklch(94% 0.040 25);
+  /* the same badge, the other way: a pass reads as plainly as a failure */
+  --halo-ok: oklch(50% 0.095 155);
+  --halo-ok-soft: oklch(94% 0.035 155);
+  /* and the third answer: nothing overlaps, but the middle has closed up */
+  --halo-caution: oklch(58% 0.125 85);
+  --halo-caution-soft: oklch(95% 0.050 92);
+
+  --ify-viewport-mesh: oklch(62% 0.065 195);
+  --ify-viewport-edge: oklch(58% 0.120 68);
+}
+
+[data-theme="dark"] {
+  --halo-strut: oklch(80% 0.090 192);
+  --halo-cable: oklch(85% 0.110 74);
+  --halo-strut-mesh: oklch(66% 0.072 193);
+  --halo-clash: oklch(72% 0.150 25);
+  --halo-clash-soft: oklch(32% 0.060 25);
+  --halo-ok: oklch(78% 0.105 155);
+  --halo-ok-soft: oklch(30% 0.050 155);
+  --halo-caution: oklch(82% 0.115 88);
+  --halo-caution-soft: oklch(32% 0.060 88);
+
+  --ify-viewport-mesh: oklch(56% 0.070 195);
+  --ify-viewport-edge: oklch(80% 0.110 72);
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme="auto"] {
+    --halo-strut: oklch(80% 0.090 192);
+    --halo-cable: oklch(85% 0.110 74);
+    --halo-strut-mesh: oklch(66% 0.072 193);
+    --halo-clash: oklch(72% 0.150 25);
+    --halo-clash-soft: oklch(32% 0.060 25);
+    --halo-ok: oklch(78% 0.105 155);
+    --halo-ok-soft: oklch(30% 0.050 155);
+    --halo-caution: oklch(82% 0.115 88);
+    --halo-caution-soft: oklch(32% 0.060 88);
+
+    --ify-viewport-mesh: oklch(56% 0.070 195);
+    --ify-viewport-edge: oklch(80% 0.110 72);
+  }
+}

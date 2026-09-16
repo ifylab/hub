@@ -1,0 +1,84 @@
+{
+  "controls": [
+    {
+      "id": "496f9297-af6a-44e2-b384-4a0e2133fd74",
+      "label": "sides per ring",
+      "help": "at 3 the middle closes up and there is no walkway left"
+    },
+    {
+      "id": "8a40c1c2-fde3-4f5f-918e-d08bc7a51a33",
+      "label": "ring radius (m)",
+      "help": "the end rings of a module, one ring to the next; bigger widens the rope"
+    },
+    {
+      "id": "d9faf289-ef15-40f3-9b73-cb8f6805a191",
+      "label": "module length (m)",
+      "help": "ring to ring along the rope; bigger stretches each module"
+    },
+    {
+      "id": "935133a8-06d4-493e-9c59-5ba28366612d",
+      "label": "rings along the rope",
+      "help": "n rings make n-1 modules, so 5 rings of 5 m is a 20 m rope"
+    },
+    {
+      "id": "b815c958-0c30-45fc-8284-1483abf50790",
+      "label": "middle-ring scale",
+      "help": "the middle ring against its end rings; under 1 pinches, over 1 bulges"
+    },
+    {
+      "id": "2ad4a9ce-7a46-4590-901d-a4a2133bf112",
+      "label": "strut radius (m)",
+      "help": "a strut's outside radius, so a strut is twice this across"
+    }
+  ],
+  "views": [
+    {
+      "id": "75f5921e-ec4d-4a79-9c1d-7e2c4682a2d8",
+      "param": "assembly",
+      "geometry": true
+    },
+    {
+      "id": "75f5921e-ec4d-4a79-9c1d-7e2c4682a2d8",
+      "param": "members",
+      "samples": 500
+    },
+    {
+      "id": "75f5921e-ec4d-4a79-9c1d-7e2c4682a2d8",
+      "param": "families",
+      "samples": 8
+    },
+    {
+      "id": "75f5921e-ec4d-4a79-9c1d-7e2c4682a2d8",
+      "param": "metrics",
+      "samples": 40
+    },
+    {
+      "id": "75f5921e-ec4d-4a79-9c1d-7e2c4682a2d8",
+      "param": "node_count"
+    },
+    {
+      "id": "75f5921e-ec4d-4a79-9c1d-7e2c4682a2d8",
+      "param": "member_count"
+    },
+    {
+      "id": "75f5921e-ec4d-4a79-9c1d-7e2c4682a2d8",
+      "param": "total_length"
+    },
+    {
+      "id": "75f5921e-ec4d-4a79-9c1d-7e2c4682a2d8",
+      "param": "overall_length"
+    },
+    {
+      "id": "75f5921e-ec4d-4a79-9c1d-7e2c4682a2d8",
+      "param": "inner_opening"
+    },
+    {
+      "id": "75f5921e-ec4d-4a79-9c1d-7e2c4682a2d8",
+      "param": "min_clearance"
+    },
+    {
+      "id": "75f5921e-ec4d-4a79-9c1d-7e2c4682a2d8",
+      "param": "collisions"
+    }
+  ]
+}

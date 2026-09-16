@@ -22,10 +22,21 @@ export const tools: Tool[] = [
     name: 'wireify',
     description: 'Your own Claude Code, live on the Grasshopper canvas.',
     status: 'active',
-    x: 550,
+    x: 470,
     y: 85,
     inputs: 2,
     outputs: 1,
+  },
+  {
+    id: 'halo',
+    name: 'halo',
+    description: 'HALO.gh as a web app, made with Wireify 0.3.',
+    status: 'active',
+    x: 880,
+    y: 85,
+    inputs: 1,
+    // Nothing runs downstream of the showcase: the graph ends here.
+    outputs: 0,
   },
   {
     id: 'object',
@@ -51,17 +62,19 @@ export const tools: Tool[] = [
 
 // Intentional inter-tool wires: skillmeld's output into object.ify's input, and into
 // wireify's — skillmeld genuinely composed the Grasshopper skills wireify ships in its
-// agent homes (vendored, MIT, credited in wireify's PROVENANCE.md).
+// agent homes (vendored, MIT, credited in wireify's PROVENANCE.md). wireify's output
+// into halo: the HALO page is a companion app wireify built, ported to run on its own;
+// nothing runs downstream of it, so it carries no out-feed.
 export const connections: ToolConnection[] = [
   { from: 'skillmeld', to: 'object', toInput: 0 },
   { from: 'skillmeld', to: 'wireify', toInput: 0 },
+  { from: 'wireify', to: 'halo', toInput: 0 },
 ]
 
 export const feeds: ToolFeed[] = [
   { dir: 'in', tool: 'skillmeld', socket: 0, hot: true },
   { dir: 'in', tool: 'skillmeld', socket: 1 },
   { dir: 'in', tool: 'wireify', socket: 1 },
-  { dir: 'out', tool: 'wireify', socket: 0, hot: true },
   { dir: 'in', tool: 'object', socket: 0 },
   { dir: 'out', tool: 'object', socket: 0 },
   { dir: 'in', tool: 'robotic-constructability', socket: 0 },
@@ -77,11 +90,17 @@ export interface ToolDetail {
   media?: { src: string; alt: string; caption?: string }[]
   repo?: string
   license?: string
-  /** Outbound links beside the repo CTA — marketplace listings and the like. */
-  links?: { label: string; href: string }[]
-  /** Live app embedded on the page. `src` is the deployed origin; the page appends
-   *  `?embed=1&theme=` and keeps the frame on the site theme via `ify:theme` postMessage. */
-  app?: { src: string }
+  /** Outbound links beside the repo CTA — marketplace listings and the like. A `download`
+   *  link saves the file instead of opening a tab (a definition, a dataset). */
+  links?: { label: string; href: string; download?: boolean }[]
+  /** Calls to action under the lede, above the app: the first is primary. A site-relative
+   *  href opens in the same tab. */
+  cta?: { label: string; href: string }[]
+  /** Live app embedded on the page. `src` is the deployed origin, or a site-relative path
+   *  for an app hosted under public/ (same origin); the page appends `?embed=1&theme=` and
+   *  keeps the frame on the site theme via `ify:theme` postMessage. `full` is where "open
+   *  full screen" goes when the app has its own home (a subdomain); default `src`. */
+  app?: { src: string; full?: string }
 }
 
 // Per-tool page content. Keyed by tool id; a tool with no entry shows the minimal scaffold.
@@ -170,5 +189,16 @@ export const details: Record<string, ToolDetail> = {
       { label: 'Dissertation', href: 'https://etda.libraries.psu.edu/catalog/26038szz188' },
     ],
     app: { src: 'https://constructability.ifylab.dev' },
+  },
+  halo: {
+    summary: [
+      'A Grasshopper definition running as a web page, built by Wireify 0.3. Claude read the definition on the live canvas, rewrote the wired chain as one Python component, and built this companion app for it. The app was then ported to run with no Rhino behind it. The definition is HALO, a tensegrity hollow-rope study from a 2021 manuscript, and everything below solves in your browser.',
+    ],
+    cta: [
+      { label: 'Get Wireify on Food4Rhino', href: 'https://www.food4rhino.com/en/app/wireify' },
+      { label: 'How Wireify works', href: '/tools/wireify' },
+    ],
+    license: 'Apache-2.0',
+    app: { src: '/apps/halo', full: 'https://halo.ifylab.dev' },
   },
 }

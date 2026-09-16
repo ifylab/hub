@@ -113,7 +113,10 @@ export function Tools({
   // Socket counts per tool, grown to cover every wired index.
   const counts = useMemo(() => {
     const c: Record<string, { ni: number; no: number }> = {}
-    for (const t of tools) c[t.id] = { ni: Math.max(1, t.inputs ?? 1), no: Math.max(1, t.outputs ?? 1) }
+    // A tool that declares no outputs is a dead end and draws no output socket. The loops
+    // below still raise the count if a wire or a feed actually needs one, so a miscounted
+    // tool can never lose a socket something is wired to.
+    for (const t of tools) c[t.id] = { ni: Math.max(1, t.inputs ?? 1), no: t.outputs ?? 1 }
     for (const cn of connections) {
       if (c[cn.to]) c[cn.to].ni = Math.max(c[cn.to].ni, (cn.toInput ?? 0) + 1)
       if (c[cn.from]) c[cn.from].no = Math.max(c[cn.from].no, (cn.fromOutput ?? 0) + 1)
