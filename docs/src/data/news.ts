@@ -30,7 +30,7 @@ export const entries: NewsEntry[] = [
     title: 'Wireify 0.3.0 — the companion web app',
     blurb: 'Every Grasshopper definition can now carry a browser page the plugin serves on your own machine, in step with the canvas both ways: sliders and panels push into Grasshopper, every solve pushes back into a 3D view, drawings and figures, and one button bakes a frozen HTML report. Using it needs no Claude session.',
     meta: 'via ifylab — github.com/ifylab/wireify · Sep 2026',
-    date: '2026-09-16',
+    date: '2026-09-17',
     source: 'https://github.com/ifylab/wireify',
     body: 'Wireify 0.3.0 is on the Rhino Package Manager and Food4Rhino. The headline is the companion web app: ask the session for a page and it scaffolds one into the definition’s home, built on a small kit with sliders, readouts, drawings and a 3D viewport; the plugin serves it on 127.0.0.1 behind a per-run link, and it stays in step with the canvas both ways, a drag on the page being one clean undo step in Grasshopper. Once the page exists, opening it needs no Claude session at all. One is public as an example: HALO, a tensegrity hollow-rope study, at halo.ifylab.dev. Around it: 22 canvas tools including a whole-definition wiring graph, rename and layout tools, a socket plate with Build and Open app, and arguments checked against each tool’s schema before anything runs. Version 0.2.0 no longer connects to current Claude Code, since the MCP protocol moved under it; the Package Manager updates existing installs. Rhino 8 SR18 or newer on Windows, with Claude Code on a paid plan; Mac support is planned.'
   },
