@@ -27,12 +27,10 @@ export const footerDescription = 'growing set of focused agentic tools, built on
 // destinations live in the output bank below. (GitHub is in the nav, so it is not repeated here.)
 export const footerColumns: FooterColumn[] = []
 
-// The output bank: Email and the site's own RSS feed are live; PyPI stays muted until skillmeld's
-// package is the reason to show it. Flip a state to 'live' + add the href when it lands.
+// The output bank: Email and the site's own RSS feed. Add an output with its href when it lands.
 export const footerOutputs: FooterOutput[] = [
   { label: 'Email', href: EMAIL, state: 'live' },
   { label: 'RSS', href: '/rss.xml', state: 'live' },
-  { label: 'PyPI', state: 'soon' },
 ]
 
 export const copyright = '© 2026 Hossein Zargar · ifylab.dev · Apache-2.0'
