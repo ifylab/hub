@@ -86,8 +86,21 @@ export interface ToolDetail {
   summary: string[]
   /** A few concrete points: what makes it different, how it works. */
   highlights?: string[]
-  /** Demo stills, served from public/media/tools/. */
-  media?: { src: string; alt: string; caption?: string }[]
+  /** Demo stills, served from public/media/tools/. `width`/`height` are the file's pixels, so
+   *  the page reserves the box before the image arrives. */
+  media?: { src: string; alt: string; caption?: string; width?: number; height?: number }[]
+  /** A short clip above the body copy, in the slot a live app takes: served from
+   *  public/media/tools/, muted and looping, a poster while it loads, paused with controls for
+   *  a visitor who prefers reduced motion. */
+  clip?: {
+    src: string
+    webm?: string
+    poster: string
+    alt: string
+    caption?: string
+    width: number
+    height: number
+  }
   repo?: string
   license?: string
   /** Outbound links beside the repo CTA — marketplace listings and the like. A `download`
@@ -121,32 +134,56 @@ export const details: Record<string, ToolDetail> = {
   },
   wireify: {
     summary: [
-      'Wireify connects your own Claude Code to the live Grasshopper canvas. Drop a Wireify socket, wire your inputs into it, and tell Claude what the component should do. It reads the data actually flowing through your wires — tree shapes, types, samples — writes a typed Python 3 script, runs it, reads Grasshopper’s runtime errors, and fixes them in place while you watch.',
+      'Your own Claude Code, live in Grasshopper. It reads the data flowing through your wires and writes Python components in place; every definition can also carry a companion web app.',
       'The socket converts into a stock Rhino Python 3 component: same position, wires kept, outputs solved. Saved definitions carry no Wireify dependency — colleagues without the plugin open your files like any other definition.',
+      'Since 0.3 each definition can also have a companion web app: a browser page the plugin serves on your own machine, in step with the canvas both ways. Sliders and panels on the page push into Grasshopper; every solve pushes back into the page’s 3D view, drawings and figures; one button bakes a frozen HTML report. Claude builds the page from the definition, and using it needs no Claude session. HALO is one of them: a tensegrity study from a 2021 manuscript, built this way and running on this site.',
       'Wireify makes no AI calls and needs no account of its own. It hosts an MCP server and connects the Claude Code you already have — your subscription, your data boundaries. Requires Claude Code (paid plan or Console API credits).',
-      'Install from the Rhino Package Manager: in Rhino 8 on Windows (SR18 or newer), run _PackageManager and search "wireify", then restart Rhino. Mac and Rhino 7 support is planned.',
+      'Install from the Rhino Package Manager: in Rhino 8 on Windows (SR18 or newer), run _PackageManager and search "wireify", then restart Rhino. Mac support is planned; Rhino 7 is not supported. Version 0.2.0 no longer connects to current Claude Code; the Package Manager updates it.',
     ],
+    clip: {
+      src: '/media/tools/wireify/companion-app.mp4',
+      webm: '/media/tools/wireify/companion-app.webm',
+      poster: '/media/tools/wireify/companion-app-poster.jpg',
+      alt: 'Forty-four seconds of the companion app: a slider moves the relaxed shell on the canvas and in the page’s 3D view at once, Build opens a Claude terminal in the definition’s home, and the page keeps improving while the model updates',
+      caption: 'Drag on either side: the page and the canvas stay in step.',
+      width: 1920,
+      height: 850,
+    },
     highlights: [
       'Reads live wire data before writing a line — tree shapes, types, samples — then verifies its own component against Grasshopper’s runtime errors.',
       'Converts in place to a stock Python 3 component: wires kept, one undo step, zero plugin dependency in saved files.',
       'Each definition gets its own agent home with built-in Grasshopper skills and a memory that accumulates what worked — Claude starts warm and gets warmer per file.',
-      'Built on the official MCP C# SDK at the current protocol revision — long-running operations run as background MCP tasks, and sessions default to Sonnet 5 at high reasoning effort.',
+      'Every definition can carry a companion web app — sliders, figures, drawings and a 3D view in the browser, in step with the canvas both ways, no Claude session needed to use it.',
+      'Built on the official MCP C# SDK at the current protocol revision, with 22 canvas tools including a whole-definition wiring graph; sessions default to Sonnet 5 at high reasoning effort.',
     ],
     media: [
+      {
+        src: '/media/tools/wireify/app-and-canvas.png',
+        alt: 'The companion page beside Rhino and Grasshopper: the strength factor reads 37.371 on the canvas slider and on the page, whose 3D view shows the relaxed shell coloured by height',
+        caption: 'The page and the canvas share one state — a slider reads the same on both sides, and the page’s 3D view, key figures and charts follow every solve.',
+        width: 1920,
+        height: 850,
+      },
+      {
+        src: '/media/tools/wireify/claude-improves-the-page.png',
+        alt: 'The Claude terminal over the canvas reporting two fixes to the page, a renamed key figure and a wording pass, while the page shows the relaxed net view',
+        caption: 'Build opens Claude in the definition’s home; here it reports two fixes to the page while the page stays live beside it.',
+        width: 1920,
+        height: 850,
+      },
       {
         src: '/media/tools/wireify/truss-from-json.png',
         alt: 'A roof truss generated from a JSON panel through one converted component, with named chord, vertical, and diagonal outputs',
         caption: 'A roof truss from a JSON panel, through one converted component — named chord, vertical, and diagonal outputs.',
+        width: 1920,
+        height: 926,
       },
       {
         src: '/media/tools/wireify/height-input-question.png',
         alt: 'Claude asks how to treat a Panel-fed height input before writing any code',
         caption: 'Claude asks how to treat a Panel-fed height input before writing any code.',
-      },
-      {
-        src: '/media/tools/wireify/brick-wall-session.png',
-        alt: 'Claude reports the traced upstream chain and the user’s answers before building',
-        caption: 'The traced upstream chain and the user’s decisions, reported before the build.',
+        width: 1920,
+        height: 926,
       },
     ],
     repo: 'https://github.com/ifylab/wireify',
