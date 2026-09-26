@@ -23,10 +23,21 @@ export const categories = ['.ify', 'AI tools', 'Libraries', 'Reading']
 
 export const entries: NewsEntry[] = [
   {
-    slug: 'wireify-0-3-0',
+    slug: 'skillmeld-0-4-0',
     tag: '.ify',
     tagWarm: true,
     hot: true,
+    title: 'skillmeld 0.4.0 — on PyPI, and the plugin installs without a clone',
+    blurb: 'One-line install from PyPI, the Claude Code plugin added straight from GitHub, a second scout over curated awesome-lists, and a sharper gate: the scripts a skill ships are named, repeated hosts collapse to one finding, SkillSpector findings carry their explanations, and folded descriptions and hyphenated names are discoverable again.',
+    meta: 'via ifylab — github.com/ifylab/skillmeld · Sep 2026',
+    date: '2026-09-26',
+    source: 'https://github.com/ifylab/skillmeld',
+    body: 'skillmeld 0.4.0 is on PyPI: uv tool install skillmeld puts the command on your PATH, and releases publish from the version tag through PyPI trusted publishing. The Claude Code plugin no longer needs a clone: /plugin marketplace add ifylab/skillmeld fetches the repository into the plugin cache and the skill runs the engine from there. The curated catalog gains a second build-time scout, awesome-scout, which reads a curated awesome-list and ranks every repository not already in the catalog by stars; like the SkillsMP scout, which now reports its remaining daily quota, it prints candidates only. Two discovery defects found while composing a private review skill are fixed: a description written as a folded or literal YAML block was read as its marker alone, and a hyphenated skill name never matched a query written as separate words. The security gate names the executable scripts a bundle ships, since skills that bundle scripts carried a vulnerability about twice as often in a 2026 study of 31,000 community skills, collapses a host referenced from every file into one finding with a count, and reads SkillSpector findings in full, verified against version 2.12. Trigger scoring lists queries that spell out their target skill, which route trivially, and reports a held-out rate without them.',
+  },
+  {
+    slug: 'wireify-0-3-0',
+    tag: '.ify',
+    tagWarm: true,
     title: 'Wireify 0.3.0 — the companion web app',
     blurb: 'Every Grasshopper definition can now carry a browser page the plugin serves on your own machine, in step with the canvas both ways: sliders and panels push into Grasshopper, every solve pushes back into a 3D view, drawings and figures, and one button bakes a frozen HTML report. Using it needs no Claude session.',
     meta: 'via ifylab — github.com/ifylab/wireify · Sep 2026',

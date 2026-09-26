@@ -31,6 +31,7 @@ export const footerColumns: FooterColumn[] = []
 export const footerOutputs: FooterOutput[] = [
   { label: 'Email', href: EMAIL, state: 'live' },
   { label: 'RSS', href: '/rss.xml', state: 'live' },
+  { label: 'PyPI', href: 'https://pypi.org/project/skillmeld/', state: 'live' },
 ]
 
 export const copyright = '© 2026 Hossein Zargar · ifylab.dev · Apache-2.0'

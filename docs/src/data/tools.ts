@@ -122,6 +122,7 @@ export const details: Record<string, ToolDetail> = {
     summary: [
       'skillmeld finds existing community skills for what you describe, security-scans them, and merges the best two or three into one coherent set tailored to your repo — instead of writing one from scratch.',
       'It runs on your own Claude in Claude Code, grounds in your project, and shows you what it pulled, what it found, and why before anything is installed. It builds on the existing skills ecosystem rather than replacing it.',
+      'Install it as a Claude Code plugin with /plugin marketplace add ifylab/skillmeld, or as a command-line tool with uv tool install skillmeld. Both need uv on your PATH.',
     ],
     highlights: [
       'Composes, never generates — every line in a merged skill traces byte-for-byte back to a source, enforced by a deterministic verifier.',
@@ -131,6 +132,7 @@ export const details: Record<string, ToolDetail> = {
     ],
     repo: 'https://github.com/ifylab/skillmeld',
     license: 'Apache-2.0',
+    links: [{ label: 'PyPI', href: 'https://pypi.org/project/skillmeld/' }],
   },
   wireify: {
     summary: [
