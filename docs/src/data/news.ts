@@ -22,11 +22,22 @@ export interface NewsEntry {
 export const categories = ['.ify', 'AI tools', 'Libraries', 'Reading']
 
 export const entries: NewsEntry[] = [
+{
+  slug: 'skillmeld-0-5-0',
+  tag: '.ify',
+  tagWarm: true,
+  hot: true,
+  title: 'skillmeld 0.5.0 — one skill set, every coding agent',
+  blurb: 'What skillmeld composes now installs into Claude Code, Codex, Cursor, Gemini CLI, Copilot and the other agents that read the shared skills folder, in one command; it also ships as an Agent Plugins package, and every skill carries a verdict on how it behaves outside Claude Code. The skill that drives it runs from any of those agents too.',
+  meta: 'via ifylab — github.com/ifylab/skillmeld · Oct 2026',
+  date: '2026-10-02',
+  source: 'https://github.com/ifylab/skillmeld',
+  body: 'skillmeld 0.5.0 is on PyPI. Claude Code reads AGENTS.md since version 2.1.277, and Codex, Cursor, Gemini CLI, Copilot and most other coding agents read the same SKILL.md from the same .agents/skills folder, so a composed skill set no longer belongs to one agent. The default emit now writes the plain Agent Skills tree and, with --install-for, copies it into each agent’s own directory: one shared copy for the agents that read .agents/skills, the Claude Code folder with its own fields kept, native folders for Factory and Kiro. A portability lint reports, per skill, whether it loads unchanged elsewhere, degrades because a Claude-only field is ignored, or relies on Claude Code substitution; it never rewrites a body, since every line still traces to its source. A new plugin surface writes an Agent Plugins 1.0.0 package that Codex marketplaces install; an optional sidecar gives Codex its UI metadata; an optional block in AGENTS.md points every reader at the installed skills. The /skillmeld skill itself now runs from any agent that loads Agent Skills, and skillmeld skill-install writes it from the installed package with no clone and no Node. The catalog gains Google’s and Microsoft’s skill repositories. Verified in Claude Code and Codex, with discovery verified in Gemini CLI.',
+},
   {
     slug: 'skillmeld-0-4-0',
     tag: '.ify',
     tagWarm: true,
-    hot: true,
     title: 'skillmeld 0.4.0 — on PyPI, and the plugin installs without a clone',
     blurb: 'One-line install from PyPI, the Claude Code plugin added straight from GitHub, a second scout over curated awesome-lists, and a sharper gate: the scripts a skill ships are named, repeated hosts collapse to one finding, SkillSpector findings carry their explanations, and folded descriptions and hyphenated names are discoverable again.',
     meta: 'via ifylab — github.com/ifylab/skillmeld · Sep 2026',

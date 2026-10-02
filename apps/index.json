@@ -4,7 +4,7 @@
     {
       "name": "skillmeld",
       "repo": "https://github.com/ifylab/skillmeld",
-      "description": "Discover existing community Claude skills and merge the best into one tailored, security-scanned set.",
+      "description": "Discover existing community Agent Skills and merge the best into one tailored, security-scanned set that installs into any coding agent.",
       "language": "Python",
       "status": "active"
     },

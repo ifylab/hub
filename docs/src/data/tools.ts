@@ -10,7 +10,7 @@ export const tools: Tool[] = [
   {
     id: 'skillmeld',
     name: 'skillmeld',
-    description: 'Compose community Claude skills into one tailored set.',
+    description: 'Compose community Agent Skills into one tailored set.',
     status: 'active',
     x: 75,
     y: 240,
@@ -121,14 +121,15 @@ export const details: Record<string, ToolDetail> = {
   skillmeld: {
     summary: [
       'skillmeld finds existing community skills for what you describe, security-scans them, and merges the best two or three into one coherent set tailored to your repo — instead of writing one from scratch.',
-      'It runs on your own Claude in Claude Code, grounds in your project, and shows you what it pulled, what it found, and why before anything is installed. It builds on the existing skills ecosystem rather than replacing it.',
-      'Install it as a Claude Code plugin with /plugin marketplace add ifylab/skillmeld, or as a command-line tool with uv tool install skillmeld. Both need uv on your PATH.',
+      'It runs on your own coding agent, grounds in your project, and shows you what it pulled, what it found, and why before anything is installed. The output is a plain Agent Skills tree: Claude Code reads it from .claude/skills, and Codex, Cursor, Gemini CLI, Copilot and the other agents that read .agents/skills pick up the same files unchanged.',
+      'Install the engine with uv tool install skillmeld. In Claude Code add the skill with /plugin marketplace add ifylab/skillmeld; in Codex, Gemini CLI, Cursor or Copilot run skillmeld skill-install, which writes the skill into .agents/skills.',
     ],
     highlights: [
       'Composes, never generates — every line in a merged skill traces byte-for-byte back to a source, enforced by a deterministic verifier.',
       'The mechanical work — parsing, security scanning, deduplicating, conflict detection, packaging — runs as deterministic Python with zero model calls.',
       'One pipeline: ground your repo, discover and rank candidates, security-gate each one, merge into at most three skills, and emit with a provenance record.',
       'Discovery runs against a signed hosted catalog — Ed25519-signed manifest, hash-pinned content, refreshed weekly — and the local security gate always has the final word.',
+      'Since 0.5.0 the composed set installs into each agent’s own skills directory in one command, ships as an Agent Plugins package, and carries a portability verdict per skill: portable, degrades, or Claude-only.',
     ],
     repo: 'https://github.com/ifylab/skillmeld',
     license: 'Apache-2.0',
