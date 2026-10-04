@@ -295,6 +295,12 @@ const [ctaPrimary, ...ctaExtra] = detail?.cta ?? []
     letter-spacing: var(--ify-tracking-wide);
     color: var(--ify-ink-subtle);
   }
+  /* Once the row wraps on a phone, the license follows the links instead of sitting alone at the right. */
+  @media (max-width: 640px) {
+    .license {
+      margin-left: 0;
+    }
+  }
   .note {
     margin-top: var(--ify-space-7);
     font-family: var(--ify-font-label);
