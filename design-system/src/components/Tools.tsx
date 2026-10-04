@@ -3,12 +3,14 @@
 // with sagging cables. Tiles are draggable; every connected wire's path recomputes from the
 // live socket positions on each move (the signature canvas interaction). The patch lives in a
 // fixed coordinate space and is scaled to fit, so pointer deltas are mapped back through the
-// scale. Keyboard users can nudge a focused tile with the arrow keys.
+// scale. Keyboard users can nudge a focused tile with the arrow keys. Feed stubs run past the
+// patch to the window edge, so the graph meets the page edge the way the hero wires do.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { KeyboardEvent, PointerEvent } from 'react'
 import { useReducedMotion } from 'motion/react'
 import { wirePath } from '../wire/wirePath'
 import { Socket } from '../wire/Socket'
+import { EDGE_MARGIN } from '../wire/WireField'
 import { subscribePointer, pointer } from '../wire/pointer'
 import { sampleWire, reactivePath, cursorInSvg } from '../wire/reactive'
 import { useFinePointer, useMediaQuery } from '../foundation/media'
@@ -81,6 +83,30 @@ export function socketY(tileY: number, index: number, count: number, tileH: numb
   return tileY + (tileH * (index + 1)) / (count + 1)
 }
 
+export interface Bleed {
+  left: number
+  right: number
+}
+
+/** How far, in patch units, the feed stubs run past each patch side to stop `margin` px
+ *  inside the window. Zero when the patch already sits at or past that inset. */
+export function feedBleed(
+  rectLeft: number,
+  rectRight: number,
+  viewportWidth: number,
+  scale: number,
+  margin: number,
+): Bleed {
+  if (scale <= 0) return { left: 0, right: 0 }
+  return {
+    left: Math.max(0, (rectLeft - margin) / scale),
+    right: Math.max(0, (viewportWidth - margin - rectRight) / scale),
+  }
+}
+
+const feedEdge = (dir: ToolFeed['dir'], y: number, width: number, bleed: Bleed): Pt =>
+  dir === 'in' ? { x: -bleed.left, y } : { x: width + bleed.right, y }
+
 export function Tools({
   tools,
   connections = [],
@@ -98,6 +124,7 @@ export function Tools({
   )
   const [dragging, setDragging] = useState<string | null>(null)
   const [scale, setScale] = useState(1)
+  const [bleed, setBleed] = useState<Bleed>({ left: 0, right: 0 })
   const reduce = useReducedMotion()
   const finePointer = useFinePointer()
   // The draggable wired graph needs room; below this width show a readable stacked list.
@@ -109,6 +136,8 @@ export function Tools({
   const wiresSvgRef = useRef<SVGSVGElement>(null)
   const posRef = useRef(positions)
   posRef.current = positions
+  const bleedRef = useRef(bleed)
+  bleedRef.current = bleed
 
   // Socket counts per tool, grown to cover every wired index.
   const counts = useMemo(() => {
@@ -133,11 +162,21 @@ export function Tools({
   useEffect(() => {
     const el = viewportRef.current
     if (!el) return
-    const measure = () => setScale(Math.min(1, el.clientWidth / width))
+    const measure = () => {
+      const s = Math.min(1, el.clientWidth / width)
+      const r = el.getBoundingClientRect()
+      setScale(s)
+      setBleed(feedBleed(r.left, r.right, document.documentElement.clientWidth, s, EDGE_MARGIN))
+    }
     measure()
     const ro = new ResizeObserver(measure)
     ro.observe(el)
-    return () => ro.disconnect()
+    // Once the patch is at full size its box stops changing, but the window can keep growing.
+    window.addEventListener('resize', measure)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', measure)
+    }
   }, [width, wide])
 
   // Lean every wire toward the cursor each frame (control points only, sockets stay put).
@@ -173,7 +212,7 @@ export function Tools({
           const el = feedRefs.current[i]
           if (!el) return
           const node = f.dir === 'in' ? inAt(f.tool, f.socket ?? 0) : outAt(f.tool, f.socket ?? 0)
-          const edge = f.dir === 'in' ? { x: 0, y: node.y } : { x: width, y: node.y }
+          const edge = feedEdge(f.dir, node.y, width, bleedRef.current)
           const [a, b] = f.dir === 'in' ? [edge, node] : [node, edge]
           draw(el, a, b)
         })
@@ -277,7 +316,7 @@ export function Tools({
             ))}
             {feeds.map((f, i) => {
               const node = f.dir === 'in' ? inPos(f.tool, f.socket ?? 0) : outPos(f.tool, f.socket ?? 0)
-              const edge = f.dir === 'in' ? { x: 0, y: node.y } : { x: width, y: node.y }
+              const edge = feedEdge(f.dir, node.y, width, bleed)
               const [a, b] = f.dir === 'in' ? [edge, node] : [node, edge]
               return (
                 <path
@@ -354,7 +393,7 @@ export function Tools({
             })}
             {feeds.map((f, i) => {
               const node = f.dir === 'in' ? inPos(f.tool, f.socket ?? 0) : outPos(f.tool, f.socket ?? 0)
-              const edge = f.dir === 'in' ? { x: 0, y: node.y } : { x: width, y: node.y }
+              const edge = feedEdge(f.dir, node.y, width, bleed)
               return <Socket key={`fe${i}`} cx={edge.x} cy={edge.y} />
             })}
           </svg>

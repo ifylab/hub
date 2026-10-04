@@ -51,6 +51,8 @@
   inset: 0;
   width: 100%;
   height: 100%;
+  /* Feed stubs run past the patch to the window edge. */
+  overflow: visible;
   pointer-events: none;
 }
 

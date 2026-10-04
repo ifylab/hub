@@ -23,36 +23,41 @@ export const sections: AboutSection[] = [
     title: 'Selected work',
     items: [
       {
-        title: 'Agentic data orchestration in design workflows',
-        meta: 'Workshop, Advances in Architectural Geometry (MIT) · 2025',
+        title: 'Second Lives: AI-assisted design of spatial structures from reclaimed steel',
+        meta: 'Workshop Lead, IASS-IWSS 2026 (Politecnico di Torino) · 2026',
         index: '01',
+        href: 'https://www.iass-iwss2026.org/info/workshops',
+      },
+      {
+        title: 'Agentic data orchestration in design workflows',
+        meta: 'Workshop Lead, Advances in Architectural Geometry (MIT) · 2025',
+        index: '02',
         href: 'https://github.com/goldsmith323/rhino_gh_mcp',
-        secondary: { label: 'Workshop page', href: 'https://www.aag2025.com/workshop-1' },
       },
       {
         title:
           'Design exploration of robotically assembled cross-laminated timber houses with sequential path planning',
         meta: 'Automation in Construction · 2026',
-        index: '02',
+        index: '03',
         href: 'https://doi.org/10.1016/j.autcon.2025.106637',
       },
       {
         title: 'Incorporating Robotic Constructability in Computational Design Optimization',
         meta: 'Ph.D. dissertation, Penn State · 2024',
-        index: '03',
+        index: '04',
         href: 'https://etda.libraries.psu.edu/catalog/26038szz188',
         secondary: { label: 'Repository', href: 'https://github.com/goldsmith323/Robotic-Constructability' },
       },
       {
         title: 'Agent-based modelling for early-stage optimization of spatial structures',
         meta: 'International Journal of Architectural Computing · 2023',
-        index: '04',
+        index: '05',
         href: 'https://doi.org/10.1177/14780771221143493',
       },
       {
         title: 'Deep learning in early-stage structural performance prediction',
         meta: 'IASS Symposium, Guilford · 2021',
-        index: '05',
+        index: '06',
         href: 'https://www.ingentaconnect.com/content/iass/piass/2020/00002020/00000019/art00007',
       },
     ],

@@ -55,6 +55,9 @@ interface WireSpec {
   amp: number
 }
 
+/** Inset of the edge socket banks from the field edge, shared with the Tools patch feeds. */
+export const EDGE_MARGIN = 24
+
 function buildWires(
   n: number,
   seed: number,
@@ -64,7 +67,7 @@ function buildWires(
   sagRange: [number, number],
 ): WireSpec[] {
   const rnd = mulberry32(seed)
-  const margin = 24
+  const margin = EDGE_MARGIN
   const leftX = margin
   const rightX = width - margin
   const top = margin

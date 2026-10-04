@@ -224,7 +224,6 @@ export const details: Record<string, ToolDetail> = {
     repo: 'https://github.com/goldsmith323/Robotic-Constructability',
     license: 'Apache-2.0',
     links: [
-      { label: 'Open full screen', href: 'https://constructability.ifylab.dev' },
       { label: 'The paper', href: 'https://doi.org/10.1016/j.autcon.2025.106637' },
       { label: 'Dissertation', href: 'https://etda.libraries.psu.edu/catalog/26038szz188' },
     ],

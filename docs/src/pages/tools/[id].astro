@@ -17,6 +17,10 @@ const statusLabel: Record<string, string> = { active: 'active', beta: 'beta', so
 const [lede, ...rest] = detail?.summary ?? []
 const app = detail?.app
 const clip = detail?.clip
+// Each action row is one filled button followed by compact text links.
+const repoAction = detail?.repo ? { label: 'View on GitHub', href: detail.repo, download: false } : undefined
+const [primary, ...extra] = [...(repoAction ? [repoAction] : []), ...(detail?.links ?? [])]
+const [ctaPrimary, ...ctaExtra] = detail?.cta ?? []
 ---
 
 <Base title={`${tool.name}${tool.suffix ?? ''} — .ify`} description={detail?.summary[0] ?? tool.description ?? tool.name}>
@@ -29,19 +33,20 @@ const clip = detail?.clip
     {lede ? <p class="lede">{lede}</p> : tool.description ? <p class="lede">{tool.description}</p> : null}
 
     {
-      detail?.cta?.length ? (
+      ctaPrimary ? (
         <div class="actions actions-top">
-          {detail.cta.map((c, i) =>
-            c.href.startsWith('/') ? (
-              <a class={i === 0 ? 'cta' : 'cta secondary'} href={c.href}>
+          {[ctaPrimary, ...ctaExtra].map((c, i) => {
+            const link = c.href.startsWith('/') ? (
+              <a class={i === 0 ? 'cta' : 'textlink'} href={c.href}>
                 {c.label} <span aria-hidden="true">{'→'}</span>
               </a>
             ) : (
-              <a class={i === 0 ? 'cta' : 'cta secondary'} href={c.href} target="_blank" rel="noopener noreferrer">
+              <a class={i === 0 ? 'cta' : 'textlink'} href={c.href} target="_blank" rel="noopener noreferrer">
                 {c.label} <span aria-hidden="true">{'→'}</span>
               </a>
-            ),
-          )}
+            )
+            return i > 1 ? [<span class="dot" aria-hidden="true">{'·'}</span>, link] : link
+          })}
         </div>
       ) : null
     }
@@ -115,25 +120,21 @@ const clip = detail?.clip
     }
 
     {
-      detail && (detail.repo || detail.links?.length) ? (
+      primary ? (
         <div class="actions">
-          {detail.repo ? (
-            <a class="cta" href={detail.repo} target="_blank" rel="noopener noreferrer">
-              View on GitHub <span aria-hidden="true">{'→'}</span>
-            </a>
-          ) : null}
-          {detail.links?.map((l) =>
-            l.download ? (
-              <a class="cta secondary" href={l.href} download>
+          {[primary, ...extra].map((l, i) => {
+            const link = l.download ? (
+              <a class={i === 0 ? 'cta' : 'textlink'} href={l.href} download>
                 {l.label} <span aria-hidden="true">{'↓'}</span>
               </a>
             ) : (
-              <a class="cta secondary" href={l.href} target="_blank" rel="noopener noreferrer">
+              <a class={i === 0 ? 'cta' : 'textlink'} href={l.href} target="_blank" rel="noopener noreferrer">
                 {l.label} <span aria-hidden="true">{'→'}</span>
               </a>
-            ),
-          )}
-          {detail.license ? <span class="license">{detail.license}</span> : null}
+            )
+            return i > 1 ? [<span class="dot" aria-hidden="true">{'·'}</span>, link] : link
+          })}
+          {detail?.license ? <span class="license">{detail.license}</span> : null}
         </div>
       ) : null
     }
@@ -258,8 +259,11 @@ const clip = detail?.clip
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: var(--ify-space-5);
+    gap: var(--ify-space-3) var(--ify-space-4);
     margin-top: var(--ify-space-7);
+  }
+  .actions .cta {
+    margin-right: var(--ify-space-2);
   }
   .actions-top {
     margin-top: var(--ify-space-6);
@@ -274,22 +278,18 @@ const clip = detail?.clip
     background: var(--ify-accent-strong);
     border-radius: var(--ify-radius-md);
     padding: 12px 20px;
+    white-space: nowrap;
     text-decoration: none;
     transition: background var(--ify-motion-dur) var(--ify-motion-ease-out);
   }
   .cta:hover {
     background: var(--ify-accent);
   }
-  .cta.secondary {
-    color: var(--ify-accent-strong);
-    background: transparent;
-    border: 1px solid var(--ify-accent-strong);
-    padding: 11px 19px;
-  }
-  .cta.secondary:hover {
-    background: var(--ify-accent-muted);
+  .dot {
+    color: var(--ify-line-strong);
   }
   .license {
+    margin-left: auto;
     font-family: var(--ify-font-label);
     font-size: var(--ify-text-xs);
     letter-spacing: var(--ify-tracking-wide);
@@ -334,13 +334,16 @@ const clip = detail?.clip
     letter-spacing: var(--ify-tracking-wide);
     color: var(--ify-ink-subtle);
   }
-  .app-full {
+  .app-full,
+  .textlink {
     font-family: var(--ify-font-label);
     font-size: var(--ify-text-sm);
     color: var(--ify-accent-strong);
+    white-space: nowrap;
     text-decoration: none;
   }
-  .app-full:hover {
+  .app-full:hover,
+  .textlink:hover {
     text-decoration: underline;
   }
   .app-frame {
