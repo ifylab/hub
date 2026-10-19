@@ -157,7 +157,7 @@ export const details: Record<string, ToolDetail> = {
       'Converts in place to a stock Python 3 component: wires kept, one undo step, zero plugin dependency in saved files.',
       'Each definition gets its own agent home with built-in Grasshopper skills and a memory that accumulates what worked — Claude starts warm and gets warmer per file.',
       'Every definition can carry a companion web app — sliders, figures, drawings and a 3D view in the browser, in step with the canvas both ways, no Claude session needed to use it.',
-      'Built on the official MCP C# SDK at the current protocol revision, with 22 canvas tools including a whole-definition wiring graph; sessions default to Sonnet 5 at high reasoning effort.',
+      'Built on the official MCP C# SDK at the current protocol revision, with 22 canvas tools including a whole-definition wiring graph; sessions default to the current Sonnet model at high reasoning effort.',
     ],
     media: [
       {
