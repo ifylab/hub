@@ -1,6 +1,9 @@
 // Captured from a LIVE api/state frame on 2026-09-13T18:42:17.237Z.
 // Every value, range, step and label the standalone shows comes from here - never
-// hardcoded in markup. Regenerate by re-running the capture against the live app.
+// hardcoded in markup. Two departures since: the middle-ring scale opens at 1.1, the
+// definition's own default (at the captured 0.98 every diagonal strut passes within a
+// strut's width of a middle-ring joint), and the page's generator adds the two cable
+// clearance views at the end of viewOrder.
 export const SNAPSHOT = {
   "capturedAt": "2026-09-13T18:42:17.237Z",
   "docName": "HALO",
@@ -79,7 +82,7 @@ export const SNAPSHOT = {
       "id": "b815c958-0c30-45fc-8284-1483abf50790",
       "nickName": "mid_scale",
       "kind": "slider",
-      "value": 0.98,
+      "value": 1.1,
       "min": 0.5,
       "max": 2,
       "step": 0.01,
@@ -175,6 +178,18 @@ export const SNAPSHOT = {
       "id": "75f5921e-ec4d-4a79-9c1d-7e2c4682a2d8",
       "param": "collisions",
       "label": "W1 tensegrity-module collisions",
+      "access": "item"
+    },
+    {
+      "id": "75f5921e-ec4d-4a79-9c1d-7e2c4682a2d8",
+      "param": "cable_clearance",
+      "label": "W1 tensegrity-module cable_clearance",
+      "access": "item"
+    },
+    {
+      "id": "75f5921e-ec4d-4a79-9c1d-7e2c4682a2d8",
+      "param": "cable_hits",
+      "label": "W1 tensegrity-module cable_hits",
       "access": "item"
     }
   ]

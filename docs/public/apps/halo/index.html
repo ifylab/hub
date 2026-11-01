@@ -260,6 +260,7 @@
   .m-ring, .m-xcable, .m-sec, .m-diag, .m-sec-core { fill: none; }
   .m-ring, .m-xcable, .m-sec, .m-diag { stroke-linecap: round; }
   .m-clash { fill: var(--halo-clash); stroke: none; }
+  .m-joint { fill: var(--halo-joint); stroke: none; }
   .annot {
     fill: none;
     stroke: var(--halo-annot);
@@ -359,6 +360,9 @@
   .halo-clear__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--ify-space-3) var(--ify-space-4); }
   .halo-clear__title { font-family: var(--ify-font-label); font-size: var(--ify-text-xs); letter-spacing: var(--ify-tracking-wide); color: var(--ify-ink-muted); }
   .halo-build__num { font-family: var(--ify-font-label); font-size: var(--ify-text-lg); color: var(--ify-ink); }
+  /* One line per check, struts first: the two readouts stack rather than run on, a size
+     down from the single readout they replaced so the pair does not outweigh the verdict. */
+  .halo-build__num { display: grid; gap: var(--ify-space-1); flex-basis: 100%; font-size: var(--ify-text-base); }
   .halo-state--warn { color: var(--halo-clash); background: var(--halo-clash-soft); border-color: var(--halo-clash); }
   .halo-state--ok { color: var(--halo-ok); background: var(--halo-ok-soft); border-color: var(--halo-ok); }
   .halo-state--caution { color: var(--halo-caution); background: var(--halo-caution-soft); border-color: var(--halo-caution); }
@@ -427,10 +431,12 @@
     color: var(--ify-surface);
     font-weight: var(--ify-weight-medium);
   }
+  /* Hover leans toward the ink, so the label gains contrast in both themes: toward the
+     lighter mesh shade it fell to 3.5:1 in light mode. */
   .halo-walk:hover {
     color: var(--ify-surface);
-    background: var(--halo-strut-mesh);
-    border-color: var(--halo-strut-mesh);
+    background: color-mix(in oklab, var(--halo-strut) 78%, var(--ify-ink));
+    border-color: color-mix(in oklab, var(--halo-strut) 78%, var(--ify-ink));
   }
   .halo-walk[disabled] { opacity: 0.55; cursor: default; }
 
@@ -476,7 +482,7 @@
     <div class="halo-hook-text">
       <h2 class="halo-hook">want to walk through a tensegrity rope?</h2>
       <p class="halo-lede">HALO weaves rings of steel struts and cables into a hollow rope. the cables hold
-        the struts apart, and while the struts clear each other the middle stays open to walk down.</p>
+        the struts apart, and while the members clear each other the middle stays open to walk down.</p>
     </div>
     <aside class="ify-card halo-story" aria-label="what this page is">
       <p>HALO.gh is an early form study from the 2021 manuscript on tensegrity hollow ropes:
@@ -525,11 +531,12 @@
       <div class="halo-legend">
         <span><svg class="halo-sample" viewBox="0 0 28 12" aria-hidden="true"><line class="m-diag" x1="1" y1="6" x2="27" y2="6"/></svg>struts</span>
         <span><svg class="halo-sample" viewBox="0 0 28 12" aria-hidden="true"><line class="m-ring" x1="1" y1="6" x2="27" y2="6"/></svg>cables</span>
-        <span><svg class="halo-sample" viewBox="0 0 28 12" aria-hidden="true"><circle class="m-clash" cx="14" cy="6" r="4"/></svg>struts cutting into each other</span>
+        <span><svg class="halo-sample" viewBox="0 0 28 12" aria-hidden="true"><circle class="m-joint" cx="14" cy="6" r="3.2"/></svg>joints</span>
+        <span><svg class="halo-sample" viewBox="0 0 28 12" aria-hidden="true"><circle class="m-clash" cx="14" cy="6" r="4"/></svg>members cutting into each other</span>
       </div>
       <div class="halo-clear">
         <div class="halo-clear__head">
-          <span class="halo-clear__title">do the struts clear each other?</span>
+          <span class="halo-clear__title">do the members clear each other?</span>
           <span class="ify-badge" id="build-state">checking</span>
           <span class="halo-build__num" id="build-num"></span>
         </div>
@@ -571,9 +578,8 @@
         <div>
           <h3>what a tensegrity hollow rope is</h3>
           <p>A tensegrity structure holds its shape with struts that carry only compression and cables
-            that carry only tension. In a hollow rope the struts never meet at a joint of their own: each one ends where
-            the next begins, so compression runs along the structure inside a net of cables and the
-            middle stays clear.</p>
+            that carry only tension. In a hollow rope the struts meet end to end at shared joints, so
+            compression runs continuously along the rope inside a net of cables and the middle stays clear.</p>
           <p>HALO generates that geometry, then form-finds it: a second step that balances the forces,
             by a modified force density method. This page is the generation half, in metres;
             <a href="https://doi.org/10.1061/(ASCE)AE.1943-5568.0000487" target="_blank" rel="noopener noreferrer">the manuscript</a>
@@ -586,8 +592,8 @@
             Python component that runs in stock Rhino 8, and built this page as the definition's
             companion app. Taking the page away from Rhino meant rewriting that component's geometry
             in JavaScript, which is what solves as you drag.</p>
-          <p>The port was checked against the live definition at nine states with no mismatches;
-            <a href="./PARITY.md" target="_blank" rel="noopener noreferrer">the raw report</a> has the detail.</p>
+          <p>HALO.gh stays as that early study. The page's generator has since been corrected to the
+            manuscript's module at every side count, so the two no longer match.</p>
         </div>
         <div>
           <h3>reference</h3>
@@ -637,6 +643,7 @@
 <script type="module">
   import { mount, theme, fmt } from './kit/ify-app.js';
   import { local, bindViewport } from './shim.js';
+  import { cableRadius } from './solve.js';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
   const UNIT = 'm';
@@ -681,6 +688,15 @@
     svg.setAttribute('class', 'halo-sample');
     svg.setAttribute('viewBox', '0 0 28 12');
     svg.setAttribute('aria-hidden', 'true');
+    if (kind === 'joint') {
+      const dot = document.createElementNS(SVG_NS, 'circle');
+      dot.setAttribute('class', 'm-joint');
+      dot.setAttribute('cx', '14');
+      dot.setAttribute('cy', '6');
+      dot.setAttribute('r', '2.6');
+      svg.append(dot);
+      return svg;
+    }
     for (const cls of SAMPLE[kind] || []) {
       const line = document.createElementNS(SVG_NS, 'line');
       line.setAttribute('class', cls);
@@ -711,12 +727,17 @@
   }).catch(() => { heroStatus.textContent = 'the page could not read its own settings. reload the page.'; });
 
   // --- is this rope walkable? -----------------------------------------------
-  // Two ways it is not: struts that cut into each other, and a middle that has closed up.
-  // Both are honest outcomes of the six numbers, and both are worth meeting head on.
+  // Two ways it is not: members that cut into each other - a strut into a strut, or a
+  // cable through a strut it is not tied to - and a middle that has closed up. Both are
+  // honest outcomes of the six numbers, and both are worth meeting head on.
   function walkability(s) {
     if (!s) return { ok: true };
-    if (numOf(s, 'collisions')) {
-      return { ok: false, kind: 'clash', line: 'the struts cut into each other, so this rope cannot be built as drawn.' };
+    const struts = numOf(s, 'collisions');
+    const cables = numOf(s, 'cable_hits');
+    if (struts || cables) {
+      const what = struts && cables ? 'struts and cables cut into each other'
+        : struts ? 'the struts cut into each other' : 'cables run through struts';
+      return { ok: false, kind: 'clash', line: what + ', so this rope cannot be built as drawn.' };
     }
     if (!((numOf(s, 'inner_opening') || 0) > 0)) {
       return { ok: false, kind: 'solid', line: 'the middle closes up at these settings, so there is nothing to walk down.' };
@@ -852,12 +873,17 @@
       readout('walkway diameter (m)', opening > 0 ? round(2 * opening, 2) : 'none'));
   }
 
-  // --- do the struts clear each other? --------------------------------------
+  // --- do the members clear each other? -------------------------------------
+  // Two checks, one verdict: struts against struts (two strut radii between centrelines)
+  // and cables against the struts they are not tied to (a strut radius plus a cable
+  // radius). Members that meet at a joint are the joint's detail, not a clash.
   function renderBuild(s) {
     const clear = numOf(s, 'min_clearance');
-    const hits = numOf(s, 'collisions');
+    const hits = numOf(s, 'collisions') || 0;
+    const cableClear = numOf(s, 'cable_clearance');
+    const cableHits = numOf(s, 'cable_hits') || 0;
     const strut = (s.controls || []).find((c) => c.nickName === 'strut_radius');
-    const limit = strut && typeof strut.value === 'number' ? strut.value * 2 : null;
+    const r = strut && typeof strut.value === 'number' ? strut.value : null;
     const state = el('build-state');
     const num = el('build-num');
     const note = el('build-note');
@@ -865,35 +891,47 @@
 
     if (clear === null) {
       state.textContent = 'checking';
-      num.textContent = '';
+      num.replaceChildren();
       note.textContent = 'the clearance has not been measured yet.';
       return;
     }
-    if (clear < 0) {
+    if (clear < 0 && !(cableClear >= 0)) {
       state.textContent = 'not applicable';
-      num.textContent = '';
-      note.textContent = 'fewer than two struts that share no joint, so nothing can overlap.';
+      num.replaceChildren();
+      note.textContent = 'no two members pass each other without a shared joint, so nothing can overlap.';
       return;
     }
-    num.textContent = 'centre to centre ' + metres(clear, 2)
-      + (limit !== null ? ', ' + metres(limit, 2) + ' needed' : '');
+    const line = (who, d, need) => {
+      const span = document.createElement('span');
+      span.textContent = who + ': centre to centre ' + metres(d, 2)
+        + (need !== null ? ', ' + metres(need, 2) + ' needed' : '');
+      return span;
+    };
+    const lines = [];
+    if (clear >= 0) lines.push(line('struts', clear, r !== null ? 2 * r : null));
+    if (cableClear >= 0) lines.push(line('cables to struts', cableClear, r !== null ? r + cableRadius(r) : null));
+    num.replaceChildren(...lines);
+
     const opening = numOf(s, 'inner_opening') || 0;
-    if (!hits && opening <= 0) {
+    if (!hits && !cableHits && opening <= 0) {
       state.textContent = 'no walkway';
       state.classList.add('halo-state--caution');
       note.textContent = 'nothing overlaps, but the middle closes up at these settings:'
         + ' solid through, with nothing to walk down.';
       return;
     }
-    if (hits) {
-      state.textContent = 'struts overlap';
+    if (hits || cableHits) {
+      const parts = [];
+      if (hits) parts.push(fmt.count(hits) + (hits === 1 ? ' pair of struts cuts' : ' pairs of struts cut') + ' into each other');
+      if (cableHits) parts.push(fmt.count(cableHits) + (cableHits === 1 ? ' cable runs' : ' cables run') + ' through a strut');
+      state.textContent = 'members overlap';
       state.classList.add('halo-state--warn');
-      note.textContent = fmt.count(hits) + (hits === 1 ? ' pair' : ' pairs')
-        + ' cut into each other, at the red spheres. a thinner strut or another mid-ring scale opens them up.';
+      note.textContent = parts.join(' and ')
+        + ', at the red spheres. a thinner strut or another middle-ring scale opens them up.';
     } else {
       state.textContent = 'clear';
       state.classList.add('halo-state--ok');
-      note.textContent = 'no two struts cut into each other. a geometric check only: no loads, no forces.';
+      note.textContent = 'no member cuts into another. a geometric check only: no loads, no forces.';
     }
   }
 
@@ -972,6 +1010,24 @@
       // A secondary strut draws hollow - the same line with a surface-coloured core - so
       // the two strut families separate without a third colour.
       if (fam === 'sec') for (const seg of segs) if (seg.fam === 'sec') drawSeg(seg, 'm-sec-core');
+    }
+    // A dot at every joint, on top, as the manuscript draws its nodes: once per spot, since
+    // a section stacks every ring's joints onto the same few points.
+    const placed = new Set();
+    for (const seg of segs) {
+      for (const p of [seg.a, seg.b]) {
+        const q = project(p);
+        const cx = X(q[0]).toFixed(1);
+        const cy = Y(q[1]).toFixed(1);
+        if (placed.has(cx + ',' + cy)) continue;
+        placed.add(cx + ',' + cy);
+        const dot = document.createElementNS(SVG_NS, 'circle');
+        dot.setAttribute('class', 'm-joint');
+        dot.setAttribute('cx', cx);
+        dot.setAttribute('cy', cy);
+        dot.setAttribute('r', '1.9');
+        frag.append(dot);
+      }
     }
     // Scale bar: a real model length, so the drawing can be read off.
     const step = niceStep((innerW * 0.28) / sc);
@@ -1065,6 +1121,13 @@
       li.append(sample('walkway'), name, says);
       legend.append(li);
     }
+    const joint = document.createElement('li');
+    const jointName = document.createElement('b');
+    jointName.textContent = 'joints';
+    const jointSays = document.createElement('span');
+    jointSays.textContent = 'where struts and cables meet';
+    joint.append(sample('joint'), jointName, jointSays);
+    legend.append(joint);
 
     const head = document.createElement('thead');
     const hr = document.createElement('tr');

@@ -79,6 +79,14 @@
     {
       "id": "75f5921e-ec4d-4a79-9c1d-7e2c4682a2d8",
       "param": "collisions"
+    },
+    {
+      "id": "75f5921e-ec4d-4a79-9c1d-7e2c4682a2d8",
+      "param": "cable_clearance"
+    },
+    {
+      "id": "75f5921e-ec4d-4a79-9c1d-7e2c4682a2d8",
+      "param": "cable_hits"
     }
   ]
 }

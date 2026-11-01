@@ -30,6 +30,9 @@
   --halo-xcable: var(--halo-cable);
   /* The walkway annotation is not a member: neutral ink, never a third hue. */
   --halo-annot: var(--ify-ink-subtle);
+  /* A joint is steel hardware, not a member: a neutral steel that sits darker than the
+     struts in light mode and lighter in dark, so the nodes read as nodes in both. */
+  --halo-joint: oklch(46% 0.018 205);
   /* struts that pass within two radii of another: the manuscript's Collision message */
   --halo-clash: oklch(62% 0.170 25);
   --halo-clash-soft: oklch(94% 0.040 25);
@@ -48,6 +51,7 @@
   --halo-strut: oklch(80% 0.090 192);
   --halo-cable: oklch(85% 0.110 74);
   --halo-strut-mesh: oklch(66% 0.072 193);
+  --halo-joint: oklch(64% 0.016 200);
   --halo-clash: oklch(72% 0.150 25);
   --halo-clash-soft: oklch(32% 0.060 25);
   --halo-ok: oklch(78% 0.105 155);
@@ -64,6 +68,7 @@
     --halo-strut: oklch(80% 0.090 192);
     --halo-cable: oklch(85% 0.110 74);
     --halo-strut-mesh: oklch(66% 0.072 193);
+    --halo-joint: oklch(64% 0.016 200);
     --halo-clash: oklch(72% 0.150 25);
     --halo-clash-soft: oklch(32% 0.060 25);
     --halo-ok: oklch(78% 0.105 155);

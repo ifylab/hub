@@ -1,20 +1,32 @@
-// HALO - tensegrity hollow-rope module. JavaScript port of W1 tensegrity-module.
+// HALO - tensegrity hollow-rope module: the page's form generator.
 //
-// Ported from W1_tensegrity_module.py (sha256 0788de29...db5d).
-// That component's geometric core works on plain (x, y, z) tuples and integer index
-// pairs, so everything up to its "Rhino boundary" section transfers exactly. What does
-// NOT transfer is documented in README.md; the short version is that Brep.CreatePipe is
-// RhinoCommon, so this file builds its own tube meshes for the viewport instead of
-// Rhino's pipe surfaces.
+// It began as a line-for-line port of W1_tensegrity_module.py, the Python component that
+// HALO.gh's wired chain became. That chain was a five-sided study: it turned the middle
+// ring a fixed 180 degrees, reached the X-cable joints by fixed index offsets and never
+// wrapped those round the ring, so it built the manuscript's module only at five sides,
+// and even there left 24 X-cables out at the seam. This file builds the manuscript's
+// module at every side count (Zargar and Alaghmandan 2021, Figs. 3 and 6):
+//   - the middle ring sits half a side round from the end rings;
+//   - a diagonal strut runs one side round, end ring to end ring;
+//   - a secondary strut runs a side and a half the other way, end ring to middle ring,
+//     and again middle ring to the next end ring;
+//   - X-cables tie every end-ring joint to the two nearest joints of each middle ring
+//     beside it.
+// At five sides every strut is HALO.gh's and every X-cable HALO.gh has is kept. HALO.gh
+// stays as the early study; this generator is the page's reference.
 //
-// Document values the Grasshopper component reads from Rhino, pinned to the captured
-// document (see snapshot.json). These are hidden inputs: change them in Rhino and the
-// outputs move with no canvas control moving.
-export const DOC = { tol: 0.001, angTol: Math.PI / 180, unitName: "Millimeter" };
+// Lengths are metres. Joints merge within a millimetre, and the same millimetre decides
+// whether a family's lengths read as one value in the metrics lines.
+export const DOC = { tol: 0.001, unitName: "Meter" };
 
 const MID_OFFSET_DIVISOR = 2.0;
-const MID_ROTATION_DEG = 180.0;
-const TIE_OFFSETS = [[0, 2], [-1, 2], [0, 3], [-1, 3]];
+const MID_TURN = 0.5; // the middle ring, in sides round from the end rings
+// Cables have a body (a one-pixel line vanishes beside a strut): a share of the strut
+// radius, with a floor so thin struts still show their net. The clearance check uses the
+// same body, so what the 3D view shows and what the check measures agree.
+const CABLE_SHARE = 0.16;
+const CABLE_MIN = 0.012;
+export const cableRadius = (strutR) => Math.max(strutR * CABLE_SHARE, CABLE_MIN);
 
 // --- formatting helpers -----------------------------------------------------
 // Python round() and %-formatting are round-half-even; JS toFixed is not. These mimic
@@ -83,25 +95,20 @@ class NodeRegistry {
   }
 }
 
-function ringPoints(x, r, count, rotationDeg) {
-  const a = (rotationDeg * Math.PI) / 180;
-  const ca = Math.cos(a);
-  const sa = Math.sin(a);
+// One ring in the plane x = const, joint j at (j + turn) sides round from +Z.
+function ringPoints(x, r, count, turn) {
   const step = (2.0 * Math.PI) / count;
   const pts = [];
   for (let j = 0; j < count; j++) {
-    const y = r * Math.sin(j * step);
-    const z = r * Math.cos(j * step);
-    pts.push([x, y * ca - z * sa, y * sa + z * ca]);
+    const a = (j + turn) * step;
+    pts.push([x, r * Math.sin(a), r * Math.cos(a)]);
   }
   return pts;
 }
 
-const mirrorY = (p) => [p[0], -p[1], p[2]];
-
 // The closest pair of points between two segments: the same clamped parameters as
-// segmentDistance (which stays as the parity-checked source of the distance), returned
-// as the two points, so a clash can be marked WHERE the struts meet.
+// segmentDistance, returned as the two points, so a clash can be marked WHERE the members
+// meet.
 function segmentClosest(p1, q1, p2, q2) {
   const d1 = [q1[0] - p1[0], q1[1] - p1[1], q1[2] - p1[2]];
   const d2 = [q2[0] - p2[0], q2[1] - p2[1], q2[2] - p2[2]];
@@ -200,66 +207,57 @@ export function core(values) {
   if (strutR <= 0) throw new Error("strut_radius must be positive (got " + strutR + ")");
 
   const tol = DOC.tol;
+  const cableR = cableRadius(strutR);
 
   const mainRings = [];
   for (let i = 0; i < ringCount; i++) mainRings.push(ringPoints(i * span, radius, nSeg, 0.0));
   const midRings = [];
   for (let i = 0; i < ringCount - 1; i++) {
-    midRings.push(
-      ringPoints(span / MID_OFFSET_DIVISOR + i * span, radius * scaleMid, nSeg, MID_ROTATION_DEG)
-    );
+    midRings.push(ringPoints(span / MID_OFFSET_DIVISOR + i * span, radius * scaleMid, nSeg, MID_TURN));
   }
 
   const nodes = new NodeRegistry(tol);
   const mainIx = mainRings.map((r) => r.map((p) => nodes.index(p)));
   const midIx = midRings.map((r) => r.map((p) => nodes.index(p)));
   const nModules = midRings.length;
+  // Every rule below wraps round the ring: a joint index past either end comes back in.
+  const at = (ring, j) => ring[((j % nSeg) + nSeg) % nSeg];
 
+  // Secondary (peripheral) cables: each end ring's own outline.
   const ringEdges = mainIx.map((r) => {
     const edges = [];
-    for (let j = 0; j < nSeg; j++) edges.push([r[j], r[(j + 1) % nSeg]]);
+    for (let j = 0; j < nSeg; j++) edges.push([r[j], at(r, j + 1)]);
     return edges;
   });
 
+  // Diagonal struts: end ring i joint j to end ring i+1 joint j+1, one side round.
   const diagonals = [];
   for (let i = 0; i < nModules; i++) {
     const run = [];
-    for (let j = 0; j < nSeg; j++) run.push([mainIx[i][j], mainIx[i + 1][(j + 1) % nSeg]]);
+    for (let j = 0; j < nSeg; j++) run.push([mainIx[i][j], at(mainIx[i + 1], j + 1)]);
     diagonals.push(run);
   }
 
-  const woven = [];
-  for (let i = 0; i < ringCount; i++) {
-    woven.push(mainIx[i]);
-    if (i < nModules) woven.push(midIx[i]);
-  }
-
+  // Secondary struts: a side and a half the other way, twice, so compression runs on
+  // from one end ring through the middle ring to the next. Middle joint k sits at k + 1/2
+  // sides, so joint j - 2 is 1.5 sides back from end joint j, and end joint k - 1 is 1.5
+  // sides back from middle joint k.
   const secondaries = Array.from({ length: nModules }, () => []);
-  for (let k = 0; k < woven.length - 1; k++) {
-    for (let j = 0; j < nSeg; j++) {
-      secondaries[Math.floor(k / 2)].push([woven[k][j], woven[k + 1][(j + 1) % nSeg]]);
-    }
+  for (let i = 0; i < nModules; i++) {
+    for (let j = 0; j < nSeg; j++) secondaries[i].push([mainIx[i][j], at(midIx[i], j - 2)]);
+    for (let k = 0; k < nSeg; k++) secondaries[i].push([midIx[i][k], at(mainIx[i + 1], k - 1)]);
   }
 
+  // X-cables: each end-ring joint to the two nearest joints of the middle ring ahead
+  // and of the middle ring behind, half a side either way (middle joints i and i - 1).
+  // The two rules never produce the same pair, so there is nothing to de-duplicate.
   const xcables = Array.from({ length: nModules }, () => []);
-  const seen = new Set();
-  let duplicateTies = 0;
   for (let p = 0; p < ringCount; p++) {
-    for (let i = 0; i <= nSeg; i++) {
-      for (const off of TIE_OFFSETS) {
-        const dp = off[0];
-        const di = off[1];
-        const q = p + dp;
-        if (!(q >= 0 && q < nModules) || i + di > nSeg) continue;
-        const a = nodes.index(mirrorY(mainRings[p][i % nSeg]));
-        const b = nodes.index(mirrorY(midRings[q][(i + di) % nSeg]));
-        const key = Math.min(a, b) + "," + Math.max(a, b);
-        if (seen.has(key)) {
-          duplicateTies++;
-          continue;
-        }
-        seen.add(key);
-        xcables[q].push([a, b]);
+    for (const q of [p, p - 1]) {
+      if (q < 0 || q >= nModules) continue;
+      for (let i = 0; i < nSeg; i++) {
+        xcables[q].push([mainIx[p][i], midIx[q][i]]);
+        xcables[q].push([mainIx[p][i], at(midIx[q], i - 1)]);
       }
     }
   }
@@ -303,12 +301,21 @@ export function core(values) {
     return Math.sqrt(y * y + z * z);
   };
 
+  // A member's span along the rope, for pruning: two members whose spans sit further
+  // apart than both the clash limit and the closest approach so far can change neither.
+  const spanOf = (pr) => {
+    const pa = nodes.points[pr[0]];
+    const pb = nodes.points[pr[1]];
+    return [Math.min(pa[0], pb[0]), Math.max(pa[0], pb[0]), pr[0], pr[1], pa, pb];
+  };
+  const midpoint = (cp) => [(cp[0][0] + cp[1][0]) / 2, (cp[0][1] + cp[1][1]) / 2, (cp[0][2] + cp[1][2]) / 2];
+  const shareJoint = (a, b) => a[2] === b[2] || a[2] === b[3] || a[3] === b[2] || a[3] === b[3];
+
+  // Struts that share no joint, closer than two strut radii: they cut into each other.
+  // Members meeting at a joint overlap near it by their own thickness; that is the joint's
+  // detail, not a clash.
   function strutClearance(pairs, limit) {
-    const items = pairs.map((pr) => {
-      const pa = nodes.points[pr[0]];
-      const pb = nodes.points[pr[1]];
-      return [Math.min(pa[0], pb[0]), Math.max(pa[0], pb[0]), pr[0], pr[1], pa, pb];
-    });
+    const items = pairs.map(spanOf);
     // Sort a permutation, not the items, so a hit can name its struts by their index in
     // `pairs` (the page marks those in the 3D view - the manuscript's own Collision message).
     const order = items.map((_, k) => k);
@@ -319,37 +326,55 @@ export function core(values) {
     let best = null;
     let hits = 0;
     for (let i = 0; i < sorted.length; i++) {
-      const x1i = sorted[i][1];
-      const ia = sorted[i][2];
-      const ib = sorted[i][3];
-      const pai = sorted[i][4];
-      const pbi = sorted[i][5];
       for (let j = i + 1; j < sorted.length; j++) {
-        if (sorted[j][0] > x1i) break;
-        const ja = sorted[j][2];
-        const jb = sorted[j][3];
-        if (ia === ja || ia === jb || ib === ja || ib === jb) continue;
-        const d = segmentDistance(pai, pbi, sorted[j][4], sorted[j][5]);
+        const gap = sorted[j][0] - sorted[i][1];
+        if (gap >= limit && best !== null && gap >= best) break;
+        if (shareJoint(sorted[i], sorted[j])) continue;
+        const d = segmentDistance(sorted[i][4], sorted[i][5], sorted[j][4], sorted[j][5]);
         if (best === null || d < best) best = d;
         if (d < limit) {
           hits++;
           clash.add(order[i]);
           clash.add(order[j]);
-          const cp = segmentClosest(pai, pbi, sorted[j][4], sorted[j][5]);
-          points.push([(cp[0][0] + cp[1][0]) / 2, (cp[0][1] + cp[1][1]) / 2, (cp[0][2] + cp[1][2]) / 2]);
+          points.push(midpoint(segmentClosest(sorted[i][4], sorted[i][5], sorted[j][4], sorted[j][5])));
         }
       }
     }
     return [best, hits, clash, points];
   }
 
+  // Cables that pass through a strut they are not tied to: axes closer than a strut
+  // radius plus a cable radius. A rope with any is not walkable, exactly as a strut clash.
+  function cableClearance(cables, struts, limit) {
+    const strutSpans = struts.map(spanOf);
+    const points = [];
+    let best = null;
+    let hits = 0;
+    for (const pr of cables) {
+      const c = spanOf(pr);
+      for (const s of strutSpans) {
+        const gap = Math.max(s[0] - c[1], c[0] - s[1], 0);
+        if (gap >= limit && best !== null && gap >= best) continue;
+        if (shareJoint(c, s)) continue;
+        const d = segmentDistance(c[4], c[5], s[4], s[5]);
+        if (best === null || d < best) best = d;
+        if (d < limit) {
+          hits++;
+          points.push(midpoint(segmentClosest(c[4], c[5], s[4], s[5])));
+        }
+      }
+    }
+    return [best, hits, points];
+  }
+
+  // The clear void about the axis: every member takes its own radius off the opening.
   let opening = null;
   for (const pair of strutMembers) {
     const d = axisDistance(pair) - strutR;
     if (opening === null || d < opening) opening = d;
   }
   for (const pair of cableMembers) {
-    const d = axisDistance(pair);
+    const d = axisDistance(pair) - cableR;
     if (opening === null || d < opening) opening = d;
   }
   const innerOpening = roundHalfEven(Math.max(0.0, opening === null ? 0.0 : opening), 6);
@@ -360,6 +385,11 @@ export function core(values) {
   const collidingStruts = cl[2];
   const clashPoints = cl[3];
   const minClearance = clearance === null ? -1.0 : roundHalfEven(clearance, 6);
+
+  const cc = cableClearance(cableMembers, strutMembers, strutR + cableR);
+  const cableHits = cc[1];
+  const cableClashPoints = cc[2];
+  const cableClear = cc[0] === null ? -1.0 : roundHalfEven(cc[0], 6);
 
   const usedIx = Array.from(new Set(allMembers.reduce((a, p) => a.concat(p), []))).sort(
     (a, b) => a - b
@@ -432,7 +462,7 @@ export function core(values) {
   };
 
   const metrics = [
-    "units: " + DOC.unitName + " (document tolerance " + fmtG(tol) + ")",
+    "units: " + DOC.unitName + " (joints merge within " + fmtG(tol) + ")",
     "form generation: " + nSeg + "-gon, " + ringCount + " rings, " + nModules + " modules",
     "module length " + fmt(span, 4) + ", ring radius " + fmt(radius, 4) + ", mid scale " +
       fmt(scaleMid, 3) + " (radius " + fmt(radius * scaleMid, 4) + "), strut radius " + fmt(strutR, 4),
@@ -440,14 +470,11 @@ export function core(values) {
     "members: " + memberCount,
   ];
   for (const spec of FAMILY_SPECS) metrics.push(groupLine(spec[1], spec[3]));
-  metrics.push("duplicate X-cables removed: " + duplicateTies);
   metrics.push("total member length: " + fmt(totalLength, 3));
+  metrics.push("struts: " + strutMembers.length + ", radius " + fmt(strutR, 4));
   metrics.push(
-    "piped members: " + strutMembers.length + " (struts), pipe radius " + fmt(strutR, 4) + ", no caps"
-  );
-  metrics.push(
-    "cable curves: " + cableMembers.length + " (" + flatRings.length + " ring + " +
-    flatXcables.length + " X-cable)"
+    "cables: " + cableMembers.length + " (" + flatRings.length + " ring + " +
+    flatXcables.length + " X-cable), radius " + fmt(cableR, 4)
   );
   metrics.push("inner opening (clear radius about the module axis): " + fmt(innerOpening, 4));
   metrics.push(
@@ -455,6 +482,12 @@ export function core(values) {
       ? "strut clearance: not applicable - fewer than two independent struts"
       : "strut clearance: " + fmt(minClearance, 4) + " closest approach, " + collisions +
         " pair(s) under " + fmt(2.0 * strutR, 4) + " (2 x strut radius)"
+  );
+  metrics.push(
+    cableClear < 0.0
+      ? "cable clearance: not applicable - no cable passes a strut it is not tied to"
+      : "cable clearance: " + fmt(cableClear, 4) + " closest approach to a strut, " + cableHits +
+        " cable crossing(s) under " + fmt(strutR + cableR, 4) + " (strut + cable radius)"
   );
   metrics.push("overall length along the module axis: " + fmt(overallLength, 3));
   metrics.push("extents y: " + fmt(extents[1][0], 3) + " to " + fmt(extents[1][1], 3));
@@ -468,6 +501,7 @@ export function core(values) {
     ringCount: flatRings.length,
     allMembers: allMembers,
     strutR: strutR,
+    cableR: cableR,
     families: families,
     members: members,
     metrics: metrics,
@@ -480,7 +514,9 @@ export function core(values) {
     collisions: collisions,
     collidingStruts: collidingStruts,
     clashPoints: clashPoints,
-    duplicateTies: duplicateTies,
+    cableClearance: cableClear,
+    cableHits: cableHits,
+    cableClashPoints: cableClashPoints,
     extents: extents,
     flatRings: flatRings,
     flatXcables: flatXcables,
@@ -488,17 +524,14 @@ export function core(values) {
 }
 
 // --- viewport geometry ------------------------------------------------------
-// Rhino's Brep.CreatePipe is not available here. The live payload meshes each strut
-// as an uncapped 24-sided tube: 50 vertices (two rings of 24 plus a duplicated seam
-// vertex each) and 48 triangles. This page draws the same wall and closes each end with a
-// disc - still one mesh per strut, so item counts and bounds match the live geometry while
-// vertex counts do not (parity compares meshes by item count and bounds).
+// Each strut is a 24-sided tube closed by a disc at each end, one mesh per strut; each
+// cable is a thin tube; each joint is a sphere the kit draws as a marker.
 const TUBE_SIDES = 24;
 
 // Colours ride the payload as theme tokens (theme.css defines them for both themes and
 // the kit re-resolves them on a flip): the manuscript's two hues, compression teal and
 // tension gold, split by job. A clash is marked where it happens - a sphere at the closest
-// point of the two struts - so the struts keep their colours (the manuscript's own
+// point of the two members - so the members keep their colours (the manuscript's own
 // Collision message marks the area, not the member).
 // Two colours in 3D, one per job: every strut compression teal, every cable tension gold.
 // The four families separate on the DRAWINGS, by line style - a third and fourth hue on a
@@ -507,15 +540,16 @@ const TUBE_SIDES = 24;
 const MESH_TOKEN = { diag: "--halo-strut-mesh", sec: "--halo-strut-mesh" };
 const CURVE_TOKEN = { ring: "--halo-cable", xcable: "--halo-cable" };
 const CLASH_TOKEN = "--halo-clash";
-// Cables have a body in the 3D view (a one-pixel line vanishes beside a strut): a share of
-// the strut radius, with a floor so thin struts still show their net.
-const CABLE_SHARE = 0.16;
-const CABLE_MIN = 0.012;
+const JOINT_TOKEN = "--halo-joint";
+// Up to four struts and eight cables meet at a joint, and near it they overlap by their
+// own thickness - out to about two strut radii for struts, three for a cable lying close
+// along a strut. Drawn bare, that read as cables stabbing into struts. The manuscript's
+// figures draw a node at every joint; so does this view, and the cables start at its
+// surface, as they would at a real node.
+const JOINT_SHARE = 1.6;
 
-// A strut is a closed cylinder: a 24-sided wall with a flat disc at each end. Rhino pipes
-// the members uncapped, and parity compares geometry by bounding box, so the ends must sit
-// exactly where the member ends - a dome would tuck the extents in by a strut radius. The
-// discs are what keep a cable from showing through an open end (Hossein, 2026-09-16).
+// A strut ends exactly at its joint, closed by a flat disc, so nothing shows through
+// the section; the joint sphere covers the disc.
 function strutMesh(a, b, r) {
   const positions = [];
   const indices = [];
@@ -578,15 +612,32 @@ export function geometry(c) {
     m.color = MESH_TOKEN[family];
     return m;
   });
-  const cableR = Math.max(c.strutR * CABLE_SHARE, CABLE_MIN);
+  const jointR = c.strutR * JOINT_SHARE;
   const curves = c.cableMembers.map((pr, i) => {
-    const a = c.nodes.points[pr[0]];
-    const b = c.nodes.points[pr[1]];
+    let a = c.nodes.points[pr[0]];
+    let b = c.nodes.points[pr[1]];
+    const len = Math.sqrt((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2 + (b[2] - a[2]) ** 2);
+    // From joint surface to joint surface; a cable too short to leave its joints keeps
+    // its full length (it is hidden inside them either way).
+    if (len > 2 * jointR) {
+      const k = jointR / len;
+      const d = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
+      a = [a[0] + d[0] * k, a[1] + d[1] * k, a[2] + d[2] * k];
+      b = [b[0] - d[0] * k, b[1] - d[1] * k, b[2] - d[2] * k];
+    }
     const family = i < c.ringCount ? "ring" : "xcable";
-    return { points: [a[0], a[1], a[2], b[0], b[1], b[2]], family: family, color: CURVE_TOKEN[family], radius: cableR };
+    return { points: [a[0], a[1], a[2], b[0], b[1], b[2]], family: family, color: CURVE_TOKEN[family], radius: c.cableR };
   });
-  // Big enough to find on a rope of many members, still tied to the strut it marks.
-  const markers = c.clashPoints.map((p) => ({ at: p, radius: c.strutR * 1.6, color: CLASH_TOKEN }));
+  const used = new Set();
+  for (const pr of c.allMembers) { used.add(pr[0]); used.add(pr[1]); }
+  const markers = [];
+  for (const i of used) markers.push({ at: c.nodes.points[i], radius: jointR, color: JOINT_TOKEN });
+  // Big enough to find on a rope of many members, still tied to the members it marks.
+  // A touch larger than a joint, so a clash beside a joint still shows, and no larger:
+  // on a slim rope bigger spheres filled the walkway.
+  for (const p of c.clashPoints.concat(c.cableClashPoints)) {
+    markers.push({ at: p, radius: c.strutR * 1.8, color: CLASH_TOKEN });
+  }
   let lo = [Infinity, Infinity, Infinity];
   let hi = [-Infinity, -Infinity, -Infinity];
   const eat = (x, y, z) => {
@@ -602,6 +653,13 @@ export function geometry(c) {
   }
   for (const cu of curves) {
     for (let i = 0; i < cu.points.length; i += 3) eat(cu.points[i], cu.points[i + 1], cu.points[i + 2]);
+  }
+  // The joints are part of the drawn rope, so the extents (the ground grid's seat, the
+  // walkthrough's ends) include them.
+  for (const i of used) {
+    const p = c.nodes.points[i];
+    eat(p[0] - jointR, p[1] - jointR, p[2] - jointR);
+    eat(p[0] + jointR, p[1] + jointR, p[2] + jointR);
   }
   const count = meshes.length + curves.length;
   return {
@@ -687,6 +745,8 @@ export function solve(values) {
     inner_opening: scalarView("inner_opening", c.innerOpening, "Number"),
     min_clearance: scalarView("min_clearance", c.minClearance, "Number"),
     collisions: scalarView("collisions", c.collisions, "Integer"),
+    cable_clearance: scalarView("cable_clearance", c.cableClearance, "Number"),
+    cable_hits: scalarView("cable_hits", c.cableHits, "Integer"),
   };
 
   return { views: views, geometry: { assembly: geo } };
