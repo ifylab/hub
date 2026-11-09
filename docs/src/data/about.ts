@@ -66,7 +66,8 @@ export const sections: AboutSection[] = [
     kind: 'experience',
     title: 'Experience',
     items: [
-      { role: 'AI Developer II', org: 'Walter P Moore', years: '2025 — present' },
+      { role: 'Computational Product Manager', org: 'Walter P Moore', years: '2026 — present' },
+      { role: 'AI Developer II', org: 'Walter P Moore', years: '2025 — 2026' },
       { role: 'AI Developer', org: 'Walter P Moore', years: '2024 — 2025' },
       { role: 'Data Science Intern', org: 'Walter P Moore', years: '2022 — 2024' },
       { role: 'Research Assistant', org: 'Penn State University', years: '2021 — 2024' },
@@ -95,8 +96,9 @@ export const sections: AboutSection[] = [
       {
         label: 'LLMs & agents',
         icon: 'bot',
-        context: 'Building and evaluating agentic LLM workflows for design and performance decisions.',
-        items: ['prompt engineering', 'MCP / agentic workflows', 'evaluation & guardrails'],
+        context:
+          'Building agent harnesses and evaluating agentic LLM workflows for design and performance decisions.',
+        items: ['agent harnesses', 'prompt engineering', 'MCP / agentic workflows', 'evaluation & guardrails'],
       },
       {
         label: 'AEC & geometry',
